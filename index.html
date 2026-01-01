@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
         tailwind.config = {
@@ -71,7 +72,7 @@
         .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-32 transition-colors duration-500" id="bodyContent">
+<body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-24 transition-colors duration-500" id="bodyContent">
 
     <div id="welcomeScreen" class="fixed inset-0 z-[300] bg-gradient-to-br from-pink-100 to-purple-100 dark:from-slate-900 dark:to-purple-900 flex flex-col items-center justify-center text-center p-6 transition duration-1000">
         <div class="relative w-32 h-32 mb-6">
@@ -87,15 +88,15 @@
         </button>
     </div>
 
-    <audio id="bgMusic" loop preload="auto">
+    <audio id="bgAudio" loop>
         <source src="Yung Kai - Blue.mp3" type="audio/mpeg">
     </audio>
 
-    <button onclick="toggleSettings()" class="md:hidden fixed top-4 left-4 z-[60] glass w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-pink-600 active:scale-90 transition">
-        <i class="fas fa-bars text-xl"></i>
+    <button onclick="toggleSettings()" class="md:hidden fixed top-5 left-5 z-[60] text-gray-500 dark:text-gray-300 hover:text-pink-500 transition-colors duration-300 transform active:scale-90">
+        <i class="fas fa-bars text-3xl drop-shadow-sm"></i>
     </button>
 
-    <div class="fixed bottom-24 right-4 z-[50] flex flex-col items-end gap-2">
+    <div class="fixed bottom-20 right-4 z-[50] flex flex-col items-end gap-2">
         <div id="musicWidget" class="hidden glass px-3 py-1.5 rounded-full shadow-lg items-center gap-2 max-w-[120px] bg-white dark:bg-slate-800">
             <div class="w-full overflow-hidden whitespace-nowrap">
                 <p class="text-[10px] font-bold text-pink-500 animate-marquee inline-block">🎵 Yung Kai - Blue 🎵</p>
@@ -106,7 +107,7 @@
         </button>
     </div>
 
-    <button onclick="showIdentityPopup()" class="fixed bottom-24 left-4 z-[50] glass p-3 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] heartbeat group transition hover:scale-110 active:scale-90 bg-white dark:bg-slate-800">
+    <button onclick="showIdentityPopup()" class="fixed bottom-20 left-4 z-[50] glass p-3 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] heartbeat group transition hover:scale-110 active:scale-90 bg-white dark:bg-slate-800">
         <span class="text-3xl">💖</span>
     </button>
 
@@ -162,19 +163,19 @@
     </div>
 
     <div id="lightbox" class="fixed inset-0 bg-black/95 z-[400] hidden flex flex-col justify-center items-center transition-opacity duration-300 opacity-0">
-        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-4xl font-bold z-50">&times;</button>
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-4xl font-bold z-50 p-2 hover:text-gray-300 transition">&times;</button>
         
-        <button onclick="prevImage(event)" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-white text-4xl p-4 hover:opacity-75 z-50">❮</button>
-        <button onclick="nextImage(event)" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-white text-4xl p-4 hover:opacity-75 z-50">❯</button>
+        <button onclick="prevImage(event)" class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❮</button>
+        <button onclick="nextImage(event)" class="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❯</button>
 
-        <img id="lightboxImg" src="" class="max-w-[95%] max-h-[85%] rounded-xl shadow-2xl scale-in object-contain">
-        <p class="text-white mt-6 text-xs font-bold opacity-50 bg-white/10 px-4 py-2 rounded-full">Geser Kiri/Kanan</p>
+        <img id="lightboxImg" src="" class="max-w-[95%] max-h-[85%] rounded-xl shadow-2xl scale-in object-contain transition-all duration-300">
+        <p class="text-white mt-4 text-xs font-bold opacity-70 bg-black/20 px-4 py-2 rounded-full">Geser Kiri / Kanan</p>
     </div>
 
     <div id="mainApp" class="opacity-0 transition duration-1000 min-h-screen flex flex-col">
         
         <div class="md:hidden fixed top-0 left-0 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-pink-100 dark:border-slate-800 z-40 h-16 flex items-center justify-center shadow-sm">
-            <div class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-widest pl-8">OUR STORY 💖</div>
+            <div class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-widest">OUR STORY 💖</div>
         </div>
 
         <nav class="hidden md:block bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-pink-100 dark:border-slate-800 sticky top-0 z-40 transition-colors duration-500">
@@ -194,22 +195,22 @@
 
         <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-pink-100 dark:border-slate-800 z-[45] pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
             <div class="flex justify-between items-center h-16 px-2 text-[10px] font-bold text-gray-400 dark:text-gray-500">
-                <a href="#header-profil" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500"><span class="text-xl">👤</span>Profil</a>
-                <a href="#gallery" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500"><span class="text-xl">📸</span>Memo</a>
-                <a href="#wishlist" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500"><span class="text-xl">✈️</span>List</a>
-                <a href="#diary" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500"><span class="text-xl">📖</span>Diary</a>
+                <a href="#header-profil" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">👤</span>Profil</a>
+                <a href="#gallery" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📸</span>Memo</a>
+                <a href="#wishlist" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">✈️</span>List</a>
+                <a href="#diary" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📖</span>Diary</a>
                 
-                <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative">
+                <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative transition-all active:scale-95">
                      <span class="text-xl">📲</span>Lainnya
                 </button>
             </div>
         </nav>
 
         <div id="extraMenu" class="hidden fixed bottom-20 right-4 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-2xl border border-pink-100 dark:border-slate-700 z-[46] flex flex-col gap-3 min-w-[140px] extra-menu-enter">
-            <a href="#maps" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200">
+            <a href="#maps" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200 transition-all active:scale-95">
                 <span class="text-xl">🗺️</span> Maps
             </a>
-            <a href="#videos" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200">
+            <a href="#videos" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200 transition-all active:scale-95">
                 <span class="text-xl">🎥</span> Vault
             </a>
         </div>
@@ -217,7 +218,7 @@
         <div id="settingsPanel" class="hidden fixed top-0 left-0 h-screen w-full md:w-80 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-6 shadow-2xl z-[100] border-r border-pink-100 dark:border-slate-700 fade-in overflow-y-auto text-gray-700 dark:text-gray-200">
             <div class="flex justify-between items-center mb-8 border-b dark:border-slate-600 pb-4">
                 <h3 class="font-bold text-xl">⚙️ Pengaturan</h3>
-                <button onclick="toggleSettings()" class="w-10 h-10 bg-red-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-red-500 font-bold">✕</button>
+                <button onclick="toggleSettings()" class="w-10 h-10 bg-red-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-red-500 font-bold transition-all active:scale-95">✕</button>
             </div>
             
             <div class="space-y-6">
@@ -225,7 +226,7 @@
                     <label class="block text-[10px] text-green-600 dark:text-green-300 font-bold mb-2 uppercase tracking-wider">Ganti Lagu (Lokal)</label>
                     <p class="text-[10px] mb-2 opacity-70">Lagu cuma berubah di HP kamu aja.</p>
                     <input type="file" id="localMusicInput" accept="audio/*" onchange="changeLocalMusic(this)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-                    <button onclick="resetLocalMusic()" class="mt-2 text-[10px] text-red-500 font-bold underline">Reset ke Lagu Awal</button>
+                    <button onclick="resetLocalMusic()" class="mt-2 text-[10px] text-red-500 font-bold underline transition-all active:scale-95">Reset ke Lagu Awal</button>
                 </div>
 
                 <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-800">
@@ -251,7 +252,7 @@
                     <label class="block text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-wider">Keamanan</label>
                     <div class="flex gap-2">
                         <input type="text" id="newPinInput" placeholder="PIN Baru" class="flex-1 p-3 bg-gray-50 dark:bg-slate-700 rounded-xl text-sm border border-gray-100 dark:border-slate-600 focus:outline-none">
-                        <button onclick="updatePin()" class="bg-gray-800 dark:bg-slate-600 text-white text-xs font-bold px-4 rounded-xl">Ganti</button>
+                        <button onclick="updatePin()" class="bg-gray-800 dark:bg-slate-600 text-white text-xs font-bold px-4 rounded-xl transition-all active:scale-95">Ganti</button>
                     </div>
                 </div>
                 
@@ -266,7 +267,7 @@
 
                 <div class="flex justify-between items-center bg-gray-100 dark:bg-slate-700 p-4 rounded-xl">
                     <span class="font-bold text-sm">Mode Gelap</span>
-                    <button onclick="toggleDarkMode()" class="w-10 h-10 bg-white dark:bg-slate-600 rounded-full flex items-center justify-center text-xl transition shadow">🌓</button>
+                    <button onclick="toggleDarkMode()" class="w-10 h-10 bg-white dark:bg-slate-600 rounded-full flex items-center justify-center text-xl transition shadow active:scale-95">🌓</button>
                 </div>
             </div>
         </div>
@@ -435,7 +436,7 @@
             </div>
         </section>
 
-        <footer class="bg-white dark:bg-slate-900 py-8 text-center text-gray-400 dark:text-gray-500 text-sm border-t dark:border-slate-800 transition-colors duration-500">
+        <footer class="bg-white dark:bg-slate-900 py-2 text-center text-gray-400 dark:text-gray-500 text-[10px] border-t dark:border-slate-800 transition-colors duration-500">
             <p>Made with 💖 by Asep & Udel</p>
         </footer>
     </div>
@@ -475,7 +476,7 @@
         let selectionMode = false;
         let selectedMemories = new Set();
         
-        // REVISI: GALLERY SLIDESHOW
+        // REVISI: VARIABEL UNTUK SLIDESHOW
         let currentGalleryImages = [];
         let currentImageIndex = 0;
 
@@ -486,7 +487,7 @@
             setTimeout(() => { ws.style.display = 'none'; }, 1000);
             document.getElementById('pinOverlay').classList.remove('hidden');
             
-            const audio = document.getElementById('bgMusic');
+            const audio = document.getElementById('bgAudio');
             const localSong = localStorage.getItem('localSong');
             if(localSong) audio.src = localSong;
             
@@ -501,7 +502,7 @@
         }
 
         window.toggleMusic = function() {
-            const audio = document.getElementById('bgMusic');
+            const audio = document.getElementById('bgAudio');
             const icon = document.getElementById('musicIcon');
             if (isMusicPlaying) { audio.pause(); icon.innerHTML = '🔇'; icon.classList.remove('animate-spin-slow'); } 
             else { audio.play(); icon.innerHTML = '🎵'; icon.classList.add('animate-spin-slow'); }
@@ -515,7 +516,7 @@
             reader.onload = function(e) {
                 try {
                     localStorage.setItem('localSong', e.target.result);
-                    const audio = document.getElementById('bgMusic');
+                    const audio = document.getElementById('bgAudio');
                     audio.src = e.target.result;
                     audio.play();
                     showPopup('Berhasil!', 'Lagu diganti di HP ini aja 🎵');
@@ -528,7 +529,7 @@
 
         window.resetLocalMusic = function() {
             localStorage.removeItem('localSong');
-            document.getElementById('bgMusic').src = "Yung Kai - Blue.mp3";
+            document.getElementById('bgAudio').src = "Yung Kai - Blue.mp3";
             showPopup('Reset', 'Balik ke lagu default.', 'success');
         }
 
@@ -553,8 +554,9 @@
             });
         });
 
-        // --- REVISI: SLIDESHOW LIGHTBOX ---
+        // --- REVISI: FUNGSI SLIDESHOW ---
         window.openLightbox = function(src) {
+            // Cari index foto yang diklik
             currentImageIndex = currentGalleryImages.findIndex(img => img.url === src);
             updateLightboxImage();
             
@@ -565,13 +567,15 @@
         
         window.updateLightboxImage = function() {
             if(currentGalleryImages.length > 0 && currentGalleryImages[currentImageIndex]) {
-                document.getElementById('lightboxImg').src = currentGalleryImages[currentImageIndex].url;
+                const img = document.getElementById('lightboxImg');
+                img.src = currentGalleryImages[currentImageIndex].url;
             }
         }
         
         window.prevImage = function(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Biar lightbox gak ketutup pas klik tombol
             if(currentGalleryImages.length === 0) return;
+            // Logic mundur dengan wrapping (kalau di awal jadi ke akhir)
             currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateLightboxImage();
         }
@@ -579,6 +583,7 @@
         window.nextImage = function(e) {
             e.stopPropagation();
             if(currentGalleryImages.length === 0) return;
+            // Logic maju dengan wrapping (kalau di akhir jadi ke awal)
             currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
             updateLightboxImage();
         }
@@ -589,7 +594,6 @@
             setTimeout(() => { lb.classList.add('hidden'); document.getElementById('lightboxImg').src = ''; }, 300);
         }
         
-        // --- EXTRA MENU TOGGLE ---
         window.toggleExtraMenu = function() {
             const menu = document.getElementById('extraMenu');
             menu.classList.toggle('hidden');
@@ -622,12 +626,12 @@
 
             if (type === 'confirm') {
                 const btnCancel = document.createElement('button');
-                btnCancel.className = "flex-1 bg-gray-100 dark:bg-slate-600 text-gray-500 dark:text-gray-300 py-3 rounded-xl font-bold";
+                btnCancel.className = "flex-1 bg-gray-100 dark:bg-slate-600 text-gray-500 dark:text-gray-400 py-3 rounded-xl font-bold transition-all active:scale-95";
                 btnCancel.innerText = "Batal";
                 btnCancel.onclick = window.closePopup;
                 
                 const btnOk = document.createElement('button');
-                btnOk.className = "flex-1 bg-pink-500 text-white py-3 rounded-xl font-bold shadow-lg";
+                btnOk.className = "flex-1 bg-pink-500 text-white py-3 rounded-xl font-bold shadow-lg transition-all active:scale-95";
                 btnOk.innerText = "Ya, Lanjut";
                 btnOk.onclick = () => { confirmAction(); window.closePopup(); };
                 
@@ -635,7 +639,7 @@
                 actions.appendChild(btnOk);
             } else {
                 const btnOk = document.createElement('button');
-                btnOk.className = "w-full bg-pink-500 text-white font-bold py-3 rounded-xl shadow-lg";
+                btnOk.className = "w-full bg-pink-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all active:scale-95";
                 btnOk.innerText = "Oke";
                 btnOk.onclick = window.closePopup;
                 actions.appendChild(btnOk);
@@ -831,7 +835,8 @@
         listenToData('gallery', (data) => {
             const g = document.getElementById('photoGrid'); g.innerHTML = '';
             const p = data ? Object.values(data).reverse() : [];
-            currentGalleryImages = p; // Store for slider
+            // REVISI: SIMPAN DATA FOTO UNTUK SLIDESHOW
+            currentGalleryImages = p; 
             
             if (p.length === 0) document.getElementById('emptyMsg').classList.remove('hidden');
             else {
