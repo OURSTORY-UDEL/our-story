@@ -28,90 +28,87 @@
     </script>
 
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-    
-    body { -webkit-tap-highlight-color: transparent; font-family: 'Quicksand', sans-serif; }
-    
-    /* Animasi Standard */
-    .scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    
-    .float-anim { animation: float 6s ease-in-out infinite; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    
-    .heartbeat { animation: heartbeat 1.5s infinite; }
-    @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        
+        body { -webkit-tap-highlight-color: transparent; font-family: 'Quicksand', sans-serif; }
+        
+        /* Animasi */
+        .scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+        
+        .heartbeat { animation: heartbeat 1.5s infinite; }
+        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-    .animate-marquee { animation: marquee 8s linear infinite; } 
-    @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-    
-    .animate-spin-slow { animation: spin 4s linear infinite; } 
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-marquee { animation: marquee 8s linear infinite; } 
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        
+        .animate-spin-slow { animation: spin 4s linear infinite; } 
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Utilitas Glassmorphism */
-    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-    .dark .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
-    
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    
-    #map { z-index: 10; border-radius: 1.5rem; height: 100%; width: 100%; }
-    
-    /* Nav Active State */
-    .nav-active span { transform: scale(1.2); display: inline-block; transition: transform 0.2s; }
-    .nav-active { color: #ec4899; font-weight: bold; }
-    .dark .nav-active { color: #f472b6; }
+        /* Utilitas */
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .dark .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        #map { z-index: 10; border-radius: 1.5rem; height: 100%; width: 100%; }
+        
+        /* Nav Active State */
+        .nav-active span { transform: scale(1.2); display: inline-block; transition: transform 0.2s; }
+        .nav-active { color: #ec4899; font-weight: bold; }
+        .dark .nav-active { color: #f472b6; }
 
-    /* Checkbox & Selection Mode */
-    .select-checkbox { display: none; }
-    .selection-mode .select-checkbox { display: block; }
+        /* Checkbox untuk Batch Delete */
+        .select-checkbox { display: none; }
+        .selection-mode .select-checkbox { display: block; }
 
-    /* Animasi Popup Menu */
-    .extra-menu-enter { transform: translateY(100%); opacity: 0; }
-    .extra-menu-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
-    .extra-menu-exit { transform: translateY(0); opacity: 1; }
-    .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
+        /* Extra Menu Popup Animation */
+        .extra-menu-enter { transform: translateY(100%); opacity: 0; }
+        .extra-menu-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+        .extra-menu-exit { transform: translateY(0); opacity: 1; }
+        .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
 
-    /* --- PERBAIKAN LAYOUT UTAMA --- */
+        /* --- PERBAIKAN LAYOUT KHUSUS MOBILE --- */
 
-    /* 1. Navigasi Bawah (Safe Area Gesture) */
-    nav.fixed.bottom-0 {
-        padding-bottom: max(1rem, env(safe-area-inset-bottom));
-        height: auto;
-        min-height: 4.5rem; /* Tinggi minimal biar ikon gak kepotong */
-        z-index: 50;
-    }
+        /* 1. Header Title (Our Story) - Sejajar Hamburger */
+        .header-mobile-fix {
+            top: 0;
+            padding-top: max(0.5rem, env(safe-area-inset-top));
+            height: auto;
+            min-height: 3.5rem;
+            align-items: center;
+        }
 
-    /* 2. Header Profil & Judul (Safe Area Kamera Atas) */
-    #header-profil, .fixed.top-0 {
-        /* Turunkan konten agar tidak nabrak poni/kamera HP */
-        padding-top: max(3.5rem, env(safe-area-inset-top)); 
-    }
+        /* 2. Hamburger Menu - Turun dikit biar sejajar */
+        .fixed.top-5.left-5 {
+            top: max(1rem, env(safe-area-inset-top));
+            z-index: 60;
+        }
 
-    /* 3. Tombol Hamburger (Menu Kiri Atas) */
-    .fixed.top-5.left-5 {
-        /* Posisikan sejajar di bawah area kamera */
-        top: max(1.5rem, env(safe-area-inset-top));
-        z-index: 60;
-    }
+        /* 3. Header Profil - Padding biar gak kepotong */
+        #header-profil {
+            padding-top: calc(5rem + env(safe-area-inset-top)); 
+            padding-bottom: 2rem;
+        }
 
-    /* 4. Widget Musik & Tombol Hati (Bawah) */
-    /* Kita naikkan sedikit biar gak ketutup Navigasi Bawah yang sudah ada paddingnya */
-    .fixed.bottom-20.right-4, .fixed.bottom-20.left-4 {
-        bottom: calc(5rem + env(safe-area-inset-bottom));
-    }
+        /* 4. Scroll Fix (Biar item terakhir tidak ngumpet di input) */
+        #wishlistGrid, #diaryList, #videoGrid {
+            padding-bottom: 12rem !important; 
+        }
 
-    /* 5. FIX SCROLLING: Bucket List & Diary */
-    /* Memberikan ruang kosong di bawah list agar item terakhir tidak ngumpet di balik input form */
-    #wishlistGrid, #diaryList, #videoGrid {
-        padding-bottom: 10rem !important; 
-    }
+        /* 5. Navigasi Bawah - Safe Area */
+        nav.fixed.bottom-0 {
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            height: auto;
+            min-height: 4.5rem;
+        }
 
-    /* 6. Style Folder Album (Gallery) */
-    .folder-tab-active { 
-        background-color: #ec4899 !important; 
-        color: white !important; 
-    }
-</style>
+        /* Style Folder Album */
+        .folder-tab-active { background-color: #ec4899 !important; color: white !important; }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-24 transition-colors duration-500" id="bodyContent">
 
@@ -133,11 +130,15 @@
         <source src="Yung Kai - Blue.mp3" type="audio/mpeg">
     </audio>
 
-    <button onclick="toggleSettings()" class="md:hidden fixed top-5 left-5 z-[60] text-gray-500 dark:text-gray-300 hover:text-pink-500 transition-colors duration-300 transform active:scale-90">
+    <div class="md:hidden fixed left-0 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-pink-100 dark:border-slate-800 z-40 flex items-center justify-center shadow-sm header-mobile-fix">
+        <div class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-widest">OUR STORY 💖</div>
+    </div>
+
+    <button onclick="toggleSettings()" class="md:hidden fixed top-5 left-5 text-gray-500 dark:text-gray-300 hover:text-pink-500 transition-colors duration-300 transform active:scale-90">
         <i class="fas fa-bars text-3xl drop-shadow-sm"></i>
     </button>
 
-    <div class="fixed bottom-20 right-4 z-[50] flex flex-col items-end gap-2">
+    <div class="fixed bottom-20 right-4 z-[50] flex flex-col items-end gap-2" style="bottom: calc(5rem + env(safe-area-inset-bottom));">
         <div id="musicWidget" class="hidden glass px-3 py-1.5 rounded-full shadow-lg items-center gap-2 max-w-[120px] bg-white dark:bg-slate-800">
             <div class="w-full overflow-hidden whitespace-nowrap">
                 <p class="text-[10px] font-bold text-pink-500 animate-marquee inline-block">🎵 Yung Kai - Blue 🎵</p>
@@ -148,9 +149,20 @@
         </button>
     </div>
 
-    <button onclick="showIdentityPopup()" class="fixed bottom-20 left-4 z-[50] glass p-3 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] heartbeat group transition hover:scale-110 active:scale-90 bg-white dark:bg-slate-800">
+    <button onclick="showIdentityPopup()" class="fixed bottom-20 left-4 z-[50] glass p-3 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] heartbeat group transition hover:scale-110 active:scale-90 bg-white dark:bg-slate-800" style="bottom: calc(5rem + env(safe-area-inset-bottom));">
         <span class="text-3xl">💖</span>
     </button>
+
+    <div id="customInputPopup" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[400] flex items-center justify-center hidden opacity-0 transition-opacity duration-300 px-6">
+        <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-2xl w-full max-w-sm scale-in border-4 border-pink-200 dark:border-slate-600">
+            <h3 class="text-xl font-bold text-pink-500 mb-2" id="customInputTitle">Judul</h3>
+            <input type="text" id="customInputField" class="w-full p-4 bg-gray-50 dark:bg-slate-900 rounded-xl mb-6 focus:outline-none focus:ring-2 focus:ring-pink-300 text-sm dark:text-white" placeholder="...">
+            <div class="flex gap-3">
+                <button onclick="closeCustomInput()" class="flex-1 bg-gray-100 dark:bg-slate-700 text-gray-500 py-3 rounded-xl font-bold text-sm">Batal</button>
+                <button id="customInputConfirmBtn" class="flex-1 bg-pink-500 text-white py-3 rounded-xl font-bold text-sm shadow-lg">Simpan</button>
+            </div>
+        </div>
+    </div>
 
     <div id="pinOverlay" class="hidden fixed inset-0 bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400 z-[200] flex flex-col items-center justify-center text-white transition duration-700">
         <div class="text-center p-8 w-full max-w-sm scale-in">
@@ -176,9 +188,9 @@
     <div id="identityPopup" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[260] flex items-center justify-center hidden transition-opacity duration-300 opacity-0 px-6">
         <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 shadow-2xl w-full max-w-sm text-center scale-in border-4 border-pink-200 dark:border-slate-600 relative">
             <button onclick="closeIdentityPopup()" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 text-xl font-bold">✕</button>
-            <div class="text-5xl mb-4">🤔</div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Kamu Siapa?</h3>
-            <p class="text-xs text-gray-400 mb-8">Pilih identitasmu biar pesan kangennya pas!</p>
+            <div class="text-5xl mb-4">🔔</div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">Kangen Banget?</h3>
+            <p class="text-xs text-gray-400 mb-8">Bunyikan notifikasi di HP pasangan kamu!</p>
             <div class="flex flex-col gap-4">
                 <button onclick="processMissYou('p1')" class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border-2 border-blue-100 dark:border-blue-800 font-bold py-4 rounded-2xl hover:bg-blue-100 transition active:scale-95 flex items-center justify-center gap-3">
                     <span class="text-2xl">🤴</span> Aku <span id="btnNameP1">Cowok</span>
@@ -205,20 +217,14 @@
 
     <div id="lightbox" class="fixed inset-0 bg-black/95 z-[400] hidden flex flex-col justify-center items-center transition-opacity duration-300 opacity-0">
         <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-4xl font-bold z-50 p-2 hover:text-gray-300 transition">&times;</button>
-        
         <button onclick="prevImage(event)" class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❮</button>
         <button onclick="nextImage(event)" class="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❯</button>
-
         <img id="lightboxImg" src="" class="max-w-[95%] max-h-[85%] rounded-xl shadow-2xl scale-in object-contain transition-all duration-300">
         <p class="text-white mt-4 text-xs font-bold opacity-70 bg-black/20 px-4 py-2 rounded-full">Geser Kiri / Kanan</p>
     </div>
 
     <div id="mainApp" class="opacity-0 transition duration-1000 min-h-screen flex flex-col">
         
-        <div class="md:hidden fixed top-0 left-0 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-pink-100 dark:border-slate-800 z-40 h-16 flex items-center justify-center shadow-sm">
-            <div class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-widest">OUR STORY 💖</div>
-        </div>
-
         <nav class="hidden md:block bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-pink-100 dark:border-slate-800 sticky top-0 z-40 transition-colors duration-500">
             <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
                 <div class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-wider">OUR STORY 💖</div>
@@ -240,21 +246,9 @@
                 <a href="#gallery" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📸</span>Memo</a>
                 <a href="#wishlist" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">✈️</span>List</a>
                 <a href="#diary" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📖</span>Diary</a>
-                
-                <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative transition-all active:scale-95">
-                     <span class="text-xl">📲</span>Lainnya
-                </button>
+                <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative transition-all active:scale-95"><span class="text-xl">📲</span>Lainnya</button>
             </div>
         </nav>
-
-        <div id="extraMenu" class="hidden fixed bottom-20 right-4 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-2xl border border-pink-100 dark:border-slate-700 z-[46] flex flex-col gap-3 min-w-[140px] extra-menu-enter">
-            <a href="#maps" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200 transition-all active:scale-95">
-                <span class="text-xl">🗺️</span> Maps
-            </a>
-            <a href="#videos" onclick="toggleExtraMenu()" class="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg text-sm font-bold text-gray-700 dark:text-gray-200 transition-all active:scale-95">
-                <span class="text-xl">🎥</span> Vault
-            </a>
-        </div>
 
         <div id="settingsPanel" class="hidden fixed top-0 left-0 h-screen w-full md:w-80 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-6 shadow-2xl z-[100] border-r border-pink-100 dark:border-slate-700 fade-in overflow-y-auto text-gray-700 dark:text-gray-200">
             <div class="flex justify-between items-center mb-8 border-b dark:border-slate-600 pb-4">
@@ -265,13 +259,12 @@
             <div class="space-y-6">
                 <div class="bg-green-50 dark:bg-green-900/30 p-4 rounded-2xl border border-green-100 dark:border-green-800">
                     <label class="block text-[10px] text-green-600 dark:text-green-300 font-bold mb-2 uppercase tracking-wider">Ganti Lagu (Lokal)</label>
-                    <p class="text-[10px] mb-2 opacity-70">Lagu cuma berubah di HP kamu aja.</p>
                     <input type="file" id="localMusicInput" accept="audio/*" onchange="changeLocalMusic(this)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
                     <button onclick="resetLocalMusic()" class="mt-2 text-[10px] text-red-500 font-bold underline transition-all active:scale-95">Reset ke Lagu Awal</button>
                 </div>
 
                 <div class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-800">
-                    <label class="block text-[10px] text-indigo-500 dark:text-indigo-300 font-bold mb-3 uppercase tracking-wider">Identitas & WhatsApp</label>
+                    <label class="block text-[10px] text-indigo-500 dark:text-indigo-300 font-bold mb-3 uppercase tracking-wider">Identitas & Kontak</label>
                     <div class="mb-3">
                         <label class="text-[10px] font-bold opacity-70">👤 Pihak 1 (Cowok)</label>
                         <div class="flex gap-2 mt-1">
@@ -313,61 +306,52 @@
             </div>
         </div>
 
-        <header id="header-profil" class="pt-24 pb-10 px-4 md:py-20 relative overflow-hidden">
+        <header id="header-profil" class="relative overflow-hidden">
             <div class="absolute top-0 left-0 w-64 h-64 bg-pink-200 dark:bg-slate-700 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
             <div class="absolute top-0 right-0 w-64 h-64 bg-purple-200 dark:bg-slate-800 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-8 left-20 w-64 h-64 bg-yellow-200 dark:bg-slate-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-
-            <div class="max-w-7xl mx-auto relative z-10">
-                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-12 md:gap-4 text-center">
+            
+            <div class="max-w-7xl mx-auto relative z-10 px-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-8 md:gap-4 text-center">
                     <div class="order-1 flex flex-col items-center">
                         <div class="relative w-40 h-40 md:w-56 md:h-56 mb-4 group cursor-pointer float-anim" onclick="document.getElementById('uploadP1').click()">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-400 to-indigo-400 rounded-full blur-md opacity-60 group-hover:opacity-80 transition"></div>
                             <img id="imgP1" src="https://via.placeholder.com/200?text=Cowok" class="w-full h-full object-cover rounded-full border-[6px] border-white dark:border-slate-800 shadow-xl relative z-10">
                             <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition z-20 text-white text-xs font-bold backdrop-blur-[2px]">📷 GANTI</div>
                         </div>
                         <input type="file" id="uploadP1" class="hidden" accept="image/*" onchange="changeProfilePic(this, 'p1')">
-                        <h2 id="nameP1" contenteditable="true" onblur="saveProfileText('p1', 'name', 'nameP1')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg hover:bg-white/50 border border-transparent hover:border-pink-200 transition focus:outline-none focus:bg-white dark:focus:bg-slate-800">Asep</h2>
-                        <p id="statusP1" contenteditable="true" onblur="saveProfileText('p1', 'status', 'statusP1')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 rounded hover:bg-white/50 transition">The King 👑</p>
+                        <h2 id="nameP1" contenteditable="true" onblur="saveProfileText('p1', 'name', 'nameP1')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg focus:bg-white dark:focus:bg-slate-800 outline-none">Asep</h2>
+                        <p id="statusP1" contenteditable="true" onblur="saveProfileText('p1', 'status', 'statusP1')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 focus:bg-white dark:focus:bg-slate-800 outline-none">The King 👑</p>
                     </div>
 
                     <div class="order-3 md:order-2 flex flex-col items-center justify-center">
                         <h2 class="text-xl font-bold text-pink-500 uppercase tracking-[0.3em] mb-4">Together Since</h2>
-                        <div id="startDateDisplay" class="text-sm font-bold text-gray-400 dark:text-gray-500 mb-8 bg-white/60 dark:bg-slate-800/60 px-4 py-1 rounded-full shadow-sm border border-pink-100 dark:border-slate-700">...</div>
-                        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-6 rounded-[2rem] shadow-2xl border-2 border-white dark:border-slate-700 w-full max-w-sm mx-auto transform hover:scale-105 transition duration-500 cursor-help" onclick="toggleSettings()" title="Klik Setting untuk ubah tanggal">
-                            <div id="loveTimer" class="grid grid-cols-2 gap-4 font-mono text-gray-700 dark:text-gray-300">
-                                <span class="col-span-2 text-center text-pink-400 animate-pulse text-sm">Menghitung cinta...</span>
-                            </div>
+                        <div id="startDateDisplay" class="text-sm font-bold text-gray-400 dark:text-gray-500 mb-8 bg-white/60 dark:bg-slate-800/60 px-4 py-1 rounded-full shadow-sm">...</div>
+                        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-6 rounded-[2rem] shadow-2xl border-2 border-white dark:border-slate-700 w-full max-w-sm mx-auto transform hover:scale-105 transition duration-500 cursor-help" onclick="toggleSettings()">
+                            <div id="loveTimer" class="grid grid-cols-2 gap-4 font-mono text-gray-700 dark:text-gray-300"></div>
                         </div>
                     </div>
 
                     <div class="order-2 md:order-3 flex flex-col items-center">
                         <div class="relative w-40 h-40 md:w-56 md:h-56 mb-4 group cursor-pointer float-anim-delay" onclick="document.getElementById('uploadP2').click()">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-pink-400 to-purple-400 rounded-full blur-md opacity-60 group-hover:opacity-80 transition"></div>
                             <img id="imgP2" src="https://via.placeholder.com/200?text=Cewek" class="w-full h-full object-cover rounded-full border-[6px] border-white dark:border-slate-800 shadow-xl relative z-10">
                             <div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition z-20 text-white text-xs font-bold backdrop-blur-[2px]">📷 GANTI</div>
                         </div>
                         <input type="file" id="uploadP2" class="hidden" accept="image/*" onchange="changeProfilePic(this, 'p2')">
-                        <h2 id="nameP2" contenteditable="true" onblur="saveProfileText('p2', 'name', 'nameP2')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg hover:bg-white/50 border border-transparent hover:border-pink-200 transition focus:outline-none focus:bg-white dark:focus:bg-slate-800">Udel</h2>
-                        <p id="statusP2" contenteditable="true" onblur="saveProfileText('p2', 'status', 'statusP2')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 rounded hover:bg-white/50 transition">The Queen 👑</p>
+                        <h2 id="nameP2" contenteditable="true" onblur="saveProfileText('p2', 'name', 'nameP2')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg focus:bg-white dark:focus:bg-slate-800 outline-none">Udel</h2>
+                        <p id="statusP2" contenteditable="true" onblur="saveProfileText('p2', 'status', 'statusP2')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 focus:bg-white dark:focus:bg-slate-800 outline-none">The Queen 👑</p>
                     </div>
                 </div>
             </div>
         </header>
         
-        <section id="gallery" class="py-20 px-4 max-w-7xl mx-auto w-full transition-all">
+        <section id="gallery" class="py-20 px-4 max-w-7xl mx-auto w-full">
             <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Our Memories 📸</h2>
                     <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Simpan setiap momen manis kita di sini.</p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="toggleSelectionMode()" id="btnSelectMode" class="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 font-bold px-6 py-3 rounded-full shadow-md active:scale-95 transition">
-                        ✓ Pilih
-                    </button>
-                    <button onclick="deleteSelectedMemories()" id="btnDeleteSelected" class="hidden bg-red-500 text-white font-bold px-6 py-3 rounded-full shadow-md active:scale-95 transition">
-                        🗑️ Hapus (<span id="selectedCount">0</span>)
-                    </button>
+                    <button onclick="toggleSelectionMode()" id="btnSelectMode" class="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 font-bold px-6 py-3 rounded-full shadow-md active:scale-95 transition">✓ Pilih</button>
+                    <button onclick="deleteSelectedMemories()" id="btnDeleteSelected" class="hidden bg-red-500 text-white font-bold px-6 py-3 rounded-full shadow-md active:scale-95 transition">🗑️ Hapus (<span id="selectedCount">0</span>)</button>
                     <label class="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-pink-200 dark:shadow-none cursor-pointer flex items-center gap-2 transition transform hover:-translate-y-1 active:scale-95">
                         <span>+ Upload</span>
                         <input type="file" class="hidden" multiple accept="image/*" onchange="window.addPhotos(this)">
@@ -381,33 +365,31 @@
             </div>
         </section>
 
-        <section id="wishlist" class="py-20 px-4 bg-pink-50 dark:bg-slate-900 border-t border-pink-100 dark:border-slate-800 transition-colors duration-500">
+        <section id="wishlist" class="py-20 px-4 bg-pink-50 dark:bg-slate-900 border-t border-pink-100 dark:border-slate-800 transition-colors duration-500 rounded-t-[3rem] mt-10">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Bucket List ✈️</h2>
                     <p class="text-gray-500 dark:text-gray-400">Mimpi-mimpi kita yang harus diwujudkan.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl sticky top-28 h-fit border border-gray-100 dark:border-slate-700">
-                        <h4 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2"><span class="bg-pink-100 dark:bg-slate-700 p-2 rounded-lg">➕</span> Tambah Rencana</h4>
-                        <input type="text" id="wishName" placeholder="Nama Tempat/Barang" class="w-full p-4 mb-3 rounded-xl bg-gray-50 dark:bg-slate-700 border-transparent focus:bg-white dark:focus:bg-slate-600 focus:border-pink-300 focus:ring-0 transition dark:text-white">
-                        <div class="relative mb-3">
-                            <span class="absolute left-4 top-4 text-gray-400 text-sm">Rp</span>
-                            <input type="number" id="wishCost" placeholder="0" class="w-full p-4 pl-10 rounded-xl bg-gray-50 dark:bg-slate-700 border-transparent focus:bg-white dark:focus:bg-slate-600 focus:border-pink-300 focus:ring-0 transition dark:text-white">
-                        </div>
-                        <input type="url" id="wishLink" placeholder="Link (Opsional)" class="w-full p-4 mb-6 rounded-xl bg-gray-50 dark:bg-slate-700 border-transparent focus:bg-white dark:focus:bg-slate-600 focus:border-pink-300 focus:ring-0 transition text-sm dark:text-white">
-                        <button onclick="window.addWish()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-pink-200 dark:shadow-none transition transform active:scale-95 flex items-center justify-center gap-2">Simpan ke Bucket List</button>
+                <div class="md:col-span-2">
+                    <div class="flex gap-4 mb-6 text-sm font-bold overflow-x-auto pb-2 no-scrollbar">
+                        <span class="bg-white dark:bg-slate-800 px-5 py-2.5 rounded-full shadow-sm border border-pink-100 dark:border-slate-700 text-pink-600 dark:text-pink-400 flex items-center gap-2 whitespace-nowrap">🎯 Total: <span id="totalWishes">0</span></span>
+                        <span class="bg-white dark:bg-slate-800 px-5 py-2.5 rounded-full shadow-sm border border-green-100 dark:border-slate-700 text-green-600 dark:text-green-400 flex items-center gap-2 whitespace-nowrap">✅ Sudah: <span id="completedWishes">0</span></span>
                     </div>
-                    <div class="md:col-span-2">
-                        <div class="flex gap-4 mb-6 text-sm font-bold overflow-x-auto pb-2 no-scrollbar">
-                            <span class="bg-white dark:bg-slate-800 px-5 py-2.5 rounded-full shadow-sm border border-pink-100 dark:border-slate-700 text-pink-600 dark:text-pink-400 flex items-center gap-2 whitespace-nowrap">🎯 Total: <span id="totalWishes">0</span></span>
-                            <span class="bg-white dark:bg-slate-800 px-5 py-2.5 rounded-full shadow-sm border border-green-100 dark:border-slate-700 text-green-600 dark:text-green-400 flex items-center gap-2 whitespace-nowrap">✅ Sudah: <span id="completedWishes">0</span></span>
+                    <div id="wishlistGrid" class="flex flex-col gap-4"></div>
+                    <div id="noWishMsg" class="hidden text-center text-gray-400 dark:text-gray-500 py-20"><span class="text-4xl">🗺️</span><br>Belum ada rencana.</div>
+                </div>
+                
+                <div class="fixed md:static bottom-20 left-0 w-full px-4 z-30 md:z-0 md:w-auto">
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-slate-700 max-w-xl mx-auto flex gap-2 items-center">
+                        <div class="flex-1 flex flex-col gap-2">
+                            <input type="text" id="wishName" placeholder="Rencana baru..." class="w-full p-3 bg-gray-50 dark:bg-slate-700 rounded-xl text-sm outline-none font-bold">
+                            <div class="flex gap-2">
+                                <input type="number" id="wishCost" placeholder="Rp 0" class="w-1/2 p-2 bg-gray-50 dark:bg-slate-700 rounded-lg text-xs outline-none">
+                                <input type="url" id="wishLink" placeholder="Link (Opsional)" class="w-1/2 p-2 bg-gray-50 dark:bg-slate-700 rounded-lg text-xs outline-none">
+                            </div>
                         </div>
-                        <div id="wishlistGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-5"></div>
-                        <div id="noWishMsg" class="hidden text-center text-gray-400 dark:text-gray-500 py-20 bg-white dark:bg-slate-800 rounded-3xl border-2 border-dashed border-pink-100 dark:border-slate-700 flex flex-col items-center justify-center">
-                            <span class="text-4xl mb-3 opacity-50">🗺️</span>
-                            Belum ada rencana. Mau kemana kita?
-                        </div>
+                        <button onclick="window.addWish()" class="bg-pink-500 hover:bg-pink-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center font-bold text-xl transition transform active:scale-95">➕</button>
                     </div>
                 </div>
             </div>
@@ -426,23 +408,20 @@
                             <div class="relative w-full h-48"><canvas id="moodChart"></canvas></div>
                             <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-2 italic" id="moodSummary">Belum ada data...</p>
                         </div>
-                        
                         <div class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-800 dark:to-slate-900 p-4 rounded-3xl shadow-xl border border-pink-100 dark:border-slate-700">
-                            <input type="text" id="diaryTitle" placeholder="Judul momen..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white font-bold text-gray-700 transition">
+                            <input type="text" id="diaryTitle" placeholder="Judul momen..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white font-bold text-gray-700">
                             <div class="flex gap-3 mb-4">
-                                <input type="date" id="diaryDate" class="w-2/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white text-gray-600 text-sm">
-                                <select id="diaryMood" class="w-1/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm text-2xl focus:outline-none focus:ring-2 focus:ring-pink-300 text-center cursor-pointer">
+                                <input type="date" id="diaryDate" class="w-2/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm text-sm">
+                                <select id="diaryMood" class="w-1/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm text-2xl text-center">
                                     <option>🥰</option><option>😂</option><option>😭</option><option>😡</option><option>🥳</option><option>😴</option>
                                 </select>
                             </div>
-                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white resize-none text-gray-600 leading-relaxed"></textarea>
-                            
-                            <button onclick="window.addDiary()" class="w-full bg-gray-800 dark:bg-slate-600 hover:bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2 group">
+                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white resize-none text-gray-600"></textarea>
+                            <button onclick="window.addDiary()" class="w-full bg-gray-800 dark:bg-slate-600 hover:bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
                                 <span>✨ Simpan Diary</span>
                             </button>
                         </div>
                     </div>
-                    
                     <div class="lg:col-span-8 space-y-6" id="diaryList">
                         <div id="noDiaryMsg" class="text-center text-gray-400 dark:text-gray-500 py-24 bg-gray-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center"><span class="text-5xl mb-4 opacity-50">📝</span>Belum ada cerita.</div>
                     </div>
@@ -467,7 +446,7 @@
             <div class="max-w-6xl mx-auto">
                 <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Video & Link Vault 🔗</h2>
                 <div class="max-w-3xl mx-auto bg-gray-50 dark:bg-slate-700 p-2 pl-4 rounded-full shadow-inner mb-16 flex flex-col md:flex-row gap-2 border border-gray-200 dark:border-slate-600">
-                    <input type="text" id="videoUrl" placeholder="Tempel Link apa saja (YouTube/TikTok/IG)..." class="flex-1 bg-transparent p-2 focus:outline-none text-gray-700 dark:text-white">
+                    <input type="text" id="videoUrl" placeholder="Tempel Link (YouTube/TikTok/IG)..." class="flex-1 bg-transparent p-2 focus:outline-none text-gray-700 dark:text-white">
                     <div class="h-8 w-px bg-gray-300 dark:bg-slate-500 my-auto hidden md:block"></div>
                     <input type="text" id="videoCaption" placeholder="Judul / Keterangan" class="md:w-1/3 bg-transparent p-2 focus:outline-none text-gray-700 dark:text-white">
                     <button onclick="window.addVideo()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2 shrink-0">💾 Simpan</button>
@@ -696,6 +675,38 @@
             setTimeout(() => { popup.classList.add('hidden'); }, 300);
         }
 
+        // --- NEW: CUSTOM INPUT POPUP (REPLACEMENT FOR PROMPT) ---
+        window.showInputPopup = function(title, callback) {
+            const popup = document.getElementById('customInputPopup');
+            document.getElementById('customInputTitle').innerText = title;
+            const field = document.getElementById('customInputField');
+            field.value = '';
+            popup.classList.remove('hidden');
+            setTimeout(() => popup.classList.remove('opacity-0'), 10);
+            field.focus();
+
+            const btn = document.getElementById('customInputConfirmBtn');
+            // Remove old listeners to avoid multiple firings
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.onclick = () => {
+                if(field.value.trim()) {
+                    callback(field.value.trim());
+                    window.closeCustomInput();
+                } else {
+                    field.classList.add('ring-2', 'ring-red-500');
+                    setTimeout(()=>field.classList.remove('ring-2', 'ring-red-500'), 500);
+                }
+            };
+        }
+
+        window.closeCustomInput = function() {
+            const popup = document.getElementById('customInputPopup');
+            popup.classList.add('opacity-0');
+            setTimeout(() => { popup.classList.add('hidden'); }, 300);
+        }
+
         // --- 4. GOOGLE MAPS IMPLEMENTATION ---
         function initMap() {
             if(map) return;
@@ -761,32 +772,14 @@
         window.processMissYou = function(role) {
             window.closeIdentityPopup();
             
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
-            var randomInRange = (min, max) => Math.random() * (max - min) + min;
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-
-            setTimeout(() => {
-                let targetNum = "";
-                let senderName = "";
-                
-                if (role === 'p1') { targetNum = contactP2; senderName = nameP1; } 
-                else { targetNum = contactP1; senderName = nameP2; }
-
-                if (!targetNum) { window.showPopup("Gagal", "Nomor pasangan belum diisi di Setting (⚙️)!", "error"); return; }
-
-                const msg = `Sayang... Aku kangen banget nih, muncul dong 🥺❤️ - dari ${senderName}`;
-                window.showPopup("Kangen Berat? 🥺", "Mau kirim pesan kangen ke WhatsApp dia sekarang?", "confirm", () => {
-                    window.open(`https://wa.me/${targetNum}?text=${encodeURIComponent(msg)}`, '_blank');
-                });
-            }, 1000);
+            // Logic Notifikasi Native (Android)
+            if (typeof Android !== 'undefined') {
+                Android.showNotification("Ada yang kangen! ❤️", `Si ${role === 'p1' ? nameP1 : nameP2} lagi kangen berat nih. Buruan chat!`);
+                Android.showToast("Notifikasi Kangen terkirim ke HP! 🔔");
+            } else {
+                // Fallback kalau dibuka di browser biasa
+                window.showPopup("Kangen Terkirim!", "Pesan kangen virtual sudah dikirim (Simulasi).");
+            }
         }
 
         window.toggleSettings = function() { document.getElementById('settingsPanel').classList.toggle('hidden'); }
@@ -967,12 +960,12 @@
         }
 
         window.createNewAlbum = function() {
-            const name = prompt("Masukan Nama Album Baru:");
-            if(name) {
+            // Ganti Prompt dengan Custom Popup
+            window.showInputPopup("✨ Nama Album Baru:", (name) => {
                 currentAlbum = name;
                 showPopup('Album Siap!', `Sekarang upload foto buat album: ${name} 📸`);
                 switchAlbum(name);
-            }
+            });
         }
 
         window.addPhotos = async function(input) {
@@ -1116,6 +1109,7 @@
         listenToData('wishlist', (data) => {
             const g = document.getElementById('wishlistGrid');
             g.innerHTML = '';
+            // Ganti CSS agar tidak ketutup (Padding bawah)
             g.className = "flex flex-col gap-4 pb-24"; 
 
             const w = data ? Object.values(data).sort((a,b)=>b.timestamp-a.timestamp) : [];
@@ -1133,13 +1127,13 @@
                     
                     c.innerHTML = `
                         <div class="flex-1">
-                            <h4 class="font-bold text-gray-800 ${wish.done?'line-through text-gray-400':''}">${wish.name}</h4>
+                            <h4 class="font-bold text-gray-800 dark:text-white ${wish.done?'line-through text-gray-400':''}">${wish.name}</h4>
                             <div class="text-xs text-pink-500 font-bold mt-1">${cost}</div>
                             ${wish.link !== '#' ? `<a href="${wish.link}" target="_blank" class="text-[10px] text-blue-500 underline block mt-1">🔗 Link</a>` : ''}
                         </div>
                         <div class="flex gap-2">
                             <button onclick="toggleWish('${wish.id}',${wish.done})" class="px-3 py-2 rounded-lg text-xs font-bold ${wish.done?'bg-white text-green-500 border border-green-200':'bg-pink-500 text-white shadow'}">${wish.done?'Batal':'✅'}</button>
-                            <button onclick="askDelete('wishlist/${wish.id}')" class="px-3 py-2 bg-gray-100 text-gray-400 rounded-lg hover:text-red-500">🗑️</button>
+                            <button onclick="askDelete('wishlist/${wish.id}')" class="px-3 py-2 bg-gray-100 dark:bg-slate-700 text-gray-400 rounded-lg hover:text-red-500">🗑️</button>
                         </div>
                     `;
                     g.appendChild(c);
@@ -1155,7 +1149,7 @@
         }
         window.toggleWish = function(id, s) { set(ref(db, `wishlist/${id}/done`), !s); }
 
-        // --- 10. VIDEO VAULT LOGIC ---
+        // --- 10. VIDEO VAULT LOGIC & SHARE HANDLER ---
         listenToData('videos', (data) => {
             const g = document.getElementById('videoGrid');
             g.innerHTML = ''; const v = data ? Object.values(data).reverse() : [];
@@ -1176,6 +1170,30 @@
             writeData(`videos/${id}`, { dbId: id, url: u, caption: document.getElementById('videoCaption').value||'Link' });
             document.getElementById('videoUrl').value=''; document.getElementById('videoCaption').value=''; showPopup('Mantap!','Link disimpan.');
         }
+
+        // --- NEW: SHARE HANDLER (AUTO INPUT DARI TIKTOK/IG) ---
+        window.handleSharedLink = function(text) {
+            // Mencari URL dalam teks
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const found = text.match(urlRegex);
+            if(found && found.length > 0) {
+                const url = found[0];
+                document.getElementById('videoUrl').value = url;
+                // Scroll ke section video
+                window.location.hash = '#videos';
+                if(typeof Android !== 'undefined') Android.showToast("Link dari Share diterima! Klik Simpan.");
+            }
+        }
+
+        // --- NEW: SHORTCUT HANDLER (WIDGET) ---
+        // Cek URL Hash saat loading untuk shortcut (e.g., content://diary)
+        window.onload = function() {
+            if(window.location.hash === '#diary') {
+                // Scroll ke diary atau buka form input
+                document.getElementById('diaryTitle').focus();
+            }
+        }
+
     </script>
 </body>
 </html>
