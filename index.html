@@ -28,66 +28,90 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
-        
-        body { -webkit-tap-highlight-color: transparent; font-family: 'Quicksand', sans-serif; }
-        
-        /* Animasi */
-        .scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .float-anim { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        
-        .heartbeat { animation: heartbeat 1.5s infinite; }
-        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+    
+    body { -webkit-tap-highlight-color: transparent; font-family: 'Quicksand', sans-serif; }
+    
+    /* Animasi Standard */
+    .scale-in { animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    
+    .float-anim { animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+    
+    .heartbeat { animation: heartbeat 1.5s infinite; }
+    @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .animate-marquee { animation: marquee 8s linear infinite; } 
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        
-        .animate-spin-slow { animation: spin 4s linear infinite; } 
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .animate-marquee { animation: marquee 8s linear infinite; } 
+    @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    
+    .animate-spin-slow { animation: spin 4s linear infinite; } 
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* Utilitas */
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .dark .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        #map { z-index: 10; border-radius: 1.5rem; height: 100%; width: 100%; }
-        
-        /* Nav Active State */
-        .nav-active span { transform: scale(1.2); display: inline-block; transition: transform 0.2s; }
-        .nav-active { color: #ec4899; font-weight: bold; }
-        .dark .nav-active { color: #f472b6; }
+    /* Utilitas Glassmorphism */
+    .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+    .dark .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
+    
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    
+    #map { z-index: 10; border-radius: 1.5rem; height: 100%; width: 100%; }
+    
+    /* Nav Active State */
+    .nav-active span { transform: scale(1.2); display: inline-block; transition: transform 0.2s; }
+    .nav-active { color: #ec4899; font-weight: bold; }
+    .dark .nav-active { color: #f472b6; }
 
-        /* Checkbox untuk Batch Delete */
-        .select-checkbox { display: none; }
-        .selection-mode .select-checkbox { display: block; }
+    /* Checkbox & Selection Mode */
+    .select-checkbox { display: none; }
+    .selection-mode .select-checkbox { display: block; }
 
-        /* Extra Menu Popup Animation */
-        .extra-menu-enter { transform: translateY(100%); opacity: 0; }
-        .extra-menu-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
-        .extra-menu-exit { transform: translateY(0); opacity: 1; }
-        .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
-        /* Update CSS Navigasi Bawah */
-        nav.fixed.bottom-0 {
-            /* Tambahin ini biar gak ketutup garis gesture bawah */
-            padding-bottom: env(safe-area-inset-bottom, 20px); 
-            height: auto; /* Biarin tingginya nyesuain isi + padding */
-        }
+    /* Animasi Popup Menu */
+    .extra-menu-enter { transform: translateY(100%); opacity: 0; }
+    .extra-menu-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
+    .extra-menu-exit { transform: translateY(0); opacity: 1; }
+    .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
 
-        /* Update Header Atas (Profil) */
-        #header-profil {
-            /* Tambahin ini biar gak ketutup status bar/jam di atas */
-            padding-top: calc(env(safe-area-inset-top, 20px) + 2rem); 
-        }
+    /* --- PERBAIKAN LAYOUT UTAMA --- */
 
-        /* Update Tombol Menu Burger (Pojok Kiri Atas) */
-        .fixed.top-5.left-5 {
-            top: calc(env(safe-area-inset-top, 20px) + 1rem);
-        }
-    </style>
+    /* 1. Navigasi Bawah (Safe Area Gesture) */
+    nav.fixed.bottom-0 {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        height: auto;
+        min-height: 4.5rem; /* Tinggi minimal biar ikon gak kepotong */
+        z-index: 50;
+    }
+
+    /* 2. Header Profil & Judul (Safe Area Kamera Atas) */
+    #header-profil, .fixed.top-0 {
+        /* Turunkan konten agar tidak nabrak poni/kamera HP */
+        padding-top: max(3.5rem, env(safe-area-inset-top)); 
+    }
+
+    /* 3. Tombol Hamburger (Menu Kiri Atas) */
+    .fixed.top-5.left-5 {
+        /* Posisikan sejajar di bawah area kamera */
+        top: max(1.5rem, env(safe-area-inset-top));
+        z-index: 60;
+    }
+
+    /* 4. Widget Musik & Tombol Hati (Bawah) */
+    /* Kita naikkan sedikit biar gak ketutup Navigasi Bawah yang sudah ada paddingnya */
+    .fixed.bottom-20.right-4, .fixed.bottom-20.left-4 {
+        bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+
+    /* 5. FIX SCROLLING: Bucket List & Diary */
+    /* Memberikan ruang kosong di bawah list agar item terakhir tidak ngumpet di balik input form */
+    #wishlistGrid, #diaryList, #videoGrid {
+        padding-bottom: 10rem !important; 
+    }
+
+    /* 6. Style Folder Album (Gallery) */
+    .folder-tab-active { 
+        background-color: #ec4899 !important; 
+        color: white !important; 
+    }
+</style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-24 transition-colors duration-500" id="bodyContent">
 
@@ -478,6 +502,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // --- VARIABEL GLOBAL ---
         let correctPin = "1234";
         let startRelationshipDate = new Date();
         let contactP1 = "6285883278505"; 
@@ -493,11 +518,12 @@
         let selectionMode = false;
         let selectedMemories = new Set();
         
-        // REVISI: VARIABEL UNTUK SLIDESHOW
-        let currentGalleryImages = [];
-        let currentImageIndex = 0;
+        // Variabel Gallery & Slideshow
+        let currentGalleryImages = []; 
+        let currentImageIndex = 0;     
+        let currentAlbum = 'All';      
 
-        // --- 1. SYSTEM INITIALIZATION & MUSIC ---
+        // --- 1. SYSTEM UTAMA & MUSIK ---
         window.enterApp = function() {
             const ws = document.getElementById('welcomeScreen');
             ws.style.opacity = '0';
@@ -571,9 +597,8 @@
             });
         });
 
-        // --- REVISI: FUNGSI SLIDESHOW ---
+        // --- 2. FITUR SLIDESHOW (LIGHTBOX) ---
         window.openLightbox = function(src) {
-            // Cari index foto yang diklik
             currentImageIndex = currentGalleryImages.findIndex(img => img.url === src);
             updateLightboxImage();
             
@@ -590,9 +615,8 @@
         }
         
         window.prevImage = function(e) {
-            e.stopPropagation(); // Biar lightbox gak ketutup pas klik tombol
+            e.stopPropagation();
             if(currentGalleryImages.length === 0) return;
-            // Logic mundur dengan wrapping (kalau di awal jadi ke akhir)
             currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateLightboxImage();
         }
@@ -600,7 +624,6 @@
         window.nextImage = function(e) {
             e.stopPropagation();
             if(currentGalleryImages.length === 0) return;
-            // Logic maju dengan wrapping (kalau di akhir jadi ke awal)
             currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
             updateLightboxImage();
         }
@@ -616,6 +639,7 @@
             menu.classList.toggle('hidden');
         }
 
+        // --- 3. HELPER & POPUP ---
         async function uploadToImgBB(file) {
             const formData = new FormData();
             formData.append("image", file);
@@ -672,18 +696,18 @@
             setTimeout(() => { popup.classList.add('hidden'); }, 300);
         }
 
-        // --- PERBAIKAN MAPS (Ganti fungsi initMap lama) ---
+        // --- 4. GOOGLE MAPS IMPLEMENTATION ---
         function initMap() {
             if(map) return;
-            // Ganti tile layer ke HTTPS dan OpenStreetMap (lebih stabil di Android WebView)
             map = L.map('map').setView([-6.2088, 106.8456], 12);
             
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                maxZoom: 19
+            // Menggunakan HTTPS agar tidak diblokir WebView Android modern
+            L.tileLayer('https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+                attribution: 'Google Maps',
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3']
             }).addTo(map);
-            
-            // Logika klik map tetap sama
+
             map.on('click', function(e) {
                 tempMapLatLng = e.latlng;
                 const modal = document.getElementById('mapInputPopup');
@@ -697,7 +721,7 @@
                 map.eachLayer((layer) => { if(layer instanceof L.Marker) { map.removeLayer(layer); } });
                 Object.values(data).forEach(loc => {
                     const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-                    marker.bindPopup(`<div class="text-center"><b>${loc.note}</b><br><button onclick="askDelete('locations/${loc.id}')" style="color:red; font-size:10px; margin-top:5px;">Hapus Lokasi</button></div>`);
+                    marker.bindPopup(`<b>${loc.note}</b><br><button onclick="askDelete('locations/${loc.id}')" style="color:red; margin-top:5px; font-size:10px;">Hapus Lokasi</button>`);
                 });
             });
         }
@@ -719,6 +743,7 @@
             }
         }
 
+        // --- 5. LOGIKA IDENTITAS & PROFILE ---
         window.showIdentityPopup = function() {
             document.getElementById('btnNameP1').innerText = nameP1;
             document.getElementById('btnNameP2').innerText = nameP2;
@@ -795,6 +820,7 @@
         function listenToData(path, callback) { onValue(ref(db, path), (snapshot) => { callback(snapshot.val()); }); }
         function writeData(path, data) { set(ref(db, path), data); }
 
+        // --- 6. DATA LISTENER (REALTIME UPDATES) ---
         onValue(ref(db, 'config'), (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -852,25 +878,64 @@
             }
         }
 
+        // --- 7. GALERI LOGIC (REVISI LENGKAP) ---
         listenToData('gallery', (data) => {
-            const g = document.getElementById('photoGrid'); g.innerHTML = '';
-            const p = data ? Object.values(data).reverse() : [];
-            // REVISI: SIMPAN DATA FOTO UNTUK SLIDESHOW
-            currentGalleryImages = p; 
+            const allPhotos = data ? Object.values(data).reverse() : [];
+            renderGallery(allPhotos);
+        });
+
+        function renderGallery(photos) {
+            const grid = document.getElementById('photoGrid');
             
-            if (p.length === 0) document.getElementById('emptyMsg').classList.remove('hidden');
-            else {
+            // Logic Tab Album
+            if (!document.getElementById('albumControls')) {
+                const albumDiv = document.createElement('div');
+                albumDiv.id = 'albumControls';
+                albumDiv.className = "flex gap-2 overflow-x-auto pb-4 mb-4 no-scrollbar";
+                grid.parentNode.insertBefore(albumDiv, grid);
+            }
+
+            const uniqueAlbums = [...new Set(photos.map(p => p.album || 'Lainnya'))];
+            const albumDiv = document.getElementById('albumControls');
+            
+            albumDiv.innerHTML = `
+                <button onclick="switchAlbum('All')" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition shadow-sm ${currentAlbum === 'All' ? 'bg-pink-500 text-white shadow-pink-300' : 'bg-white text-gray-500 border border-gray-200'}">📂 Semua</button>
+                <button onclick="createNewAlbum()" class="px-4 py-2 rounded-full text-xs font-bold bg-white text-pink-500 border border-pink-200 whitespace-nowrap hover:bg-pink-50 transition">+ Buat Album</button>
+            `;
+
+            uniqueAlbums.forEach(alb => {
+                if(alb === 'Lainnya') return; 
+                const btn = document.createElement('button');
+                btn.innerText = `📁 ${alb}`;
+                btn.onclick = () => switchAlbum(alb);
+                btn.className = `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition shadow-sm ${currentAlbum === alb ? 'bg-pink-500 text-white shadow-pink-300' : 'bg-white text-gray-500 border border-gray-200'}`;
+                albumDiv.appendChild(btn);
+            });
+
+            const filteredPhotos = currentAlbum === 'All' ? photos : photos.filter(img => img.album === currentAlbum);
+            
+            // Update Slideshow Data
+            currentGalleryImages = filteredPhotos;
+
+            grid.innerHTML = '';
+            
+            if (filteredPhotos.length === 0) {
+                document.getElementById('emptyMsg').classList.remove('hidden');
+                document.querySelector('#emptyMsg p').innerText = currentAlbum === 'All' ? "Belum ada foto. Upload dong!" : `Album '${currentAlbum}' masih kosong.`;
+            } else {
                 document.getElementById('emptyMsg').classList.add('hidden');
-                p.forEach(ph => {
+                
+                filteredPhotos.forEach((ph, index) => { 
                     const isSelected = selectedMemories.has(ph.id);
                     const d = document.createElement('div');
-                    d.className = `group relative aspect-square overflow-hidden rounded-2xl shadow-md fade-in hover:shadow-xl transition border-4 ${isSelected ? 'border-pink-500' : 'border-white dark:border-slate-700'} cursor-pointer`;
+                    
+                    d.className = `group relative aspect-square overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border-2 ${isSelected ? 'border-pink-500' : 'border-transparent'}`;
                     
                     d.innerHTML = `
-                        <img src="${ph.url}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition pointer-events-none"></div>
+                        <img src="${ph.url}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div>
                         <div class="absolute top-2 right-2 z-20 ${selectionMode ? 'block' : 'hidden'}">
-                             <div class="w-6 h-6 rounded-full border-2 border-white ${isSelected ? 'bg-pink-500' : 'bg-gray-400/50'} flex items-center justify-center text-white text-xs">✓</div>
+                             <div class="w-6 h-6 rounded-full border-2 border-white ${isSelected ? 'bg-pink-500' : 'bg-gray-400/50'} flex items-center justify-center text-white text-xs shadow-sm">✓</div>
                         </div>
                     `;
                     
@@ -878,19 +943,64 @@
                         if (selectionMode) {
                             if (selectedMemories.has(ph.id)) selectedMemories.delete(ph.id);
                             else selectedMemories.add(ph.id);
-                            
-                            d.className = `group relative aspect-square overflow-hidden rounded-2xl shadow-md fade-in hover:shadow-xl transition border-4 ${selectedMemories.has(ph.id) ? 'border-pink-500' : 'border-white dark:border-slate-700'} cursor-pointer`;
-                            d.querySelector('.absolute.top-2.right-2 div').className = `w-6 h-6 rounded-full border-2 border-white ${selectedMemories.has(ph.id) ? 'bg-pink-500' : 'bg-gray-400/50'} flex items-center justify-center text-white text-xs`;
-                            
+                            renderGallery(photos); 
                             document.getElementById('selectedCount').innerText = selectedMemories.size;
                         } else {
-                            openLightbox(ph.url);
+                            currentImageIndex = index;
+                            updateLightboxImage();
+                            const lb = document.getElementById('lightbox');
+                            lb.classList.remove('hidden');
+                            setTimeout(() => lb.classList.remove('opacity-0'), 10);
                         }
                     };
-                    g.appendChild(d);
+                    grid.appendChild(d);
                 });
             }
-        });
+        }
+
+        window.switchAlbum = function(albumName) {
+            currentAlbum = albumName;
+            listenToData('gallery', (data) => {
+                const allPhotos = data ? Object.values(data).reverse() : [];
+                renderGallery(allPhotos);
+            });
+        }
+
+        window.createNewAlbum = function() {
+            const name = prompt("Masukan Nama Album Baru:");
+            if(name) {
+                currentAlbum = name;
+                showPopup('Album Siap!', `Sekarang upload foto buat album: ${name} 📸`);
+                switchAlbum(name);
+            }
+        }
+
+        window.addPhotos = async function(input) {
+            if (input.files && input.files.length > 0) {
+                showPopup('Sabar ya...', `Lagi upload ${input.files.length} foto ke Album: ${currentAlbum === 'All' ? 'Lainnya' : currentAlbum}...`, 'loading');
+                let successCount = 0;
+                try {
+                    for (let i = 0; i < input.files.length; i++) {
+                        const file = input.files[i];
+                        const url = await uploadToImgBB(file); 
+                        const id = Date.now() + Math.random().toString().slice(2,5);
+                        
+                        await set(ref(db, `gallery/${id}`), { 
+                            url: url, 
+                            id: id,
+                            album: currentAlbum === 'All' ? 'Lainnya' : currentAlbum,
+                            timestamp: Date.now()
+                        });
+                        successCount++;
+                    }
+                    showPopup('Berhasil!', `${successCount} Foto berhasil disimpan! 🎉`);
+                } catch (e) { 
+                    console.error(e);
+                    showPopup('Yah gagal...', 'Cek koneksi internet kamu ya.', 'error'); 
+                }
+                input.value = '';
+            }
+        }
 
         window.toggleSelectionMode = function() {
             selectionMode = !selectionMode;
@@ -928,21 +1038,6 @@
             });
         }
 
-        window.addPhotos = async function(input) {
-            if (input.files && input.files.length > 0) {
-                showPopup('Sabar...', `Upload ${input.files.length} foto ke ImgBB...`, 'loading');
-                try {
-                    for (let i = 0; i < input.files.length; i++) {
-                        const url = await uploadToImgBB(input.files[i]);
-                        const id = Date.now() + Math.random().toString().slice(2,5);
-                        await set(ref(db, `gallery/${id}`), { url: url, id: id });
-                    }
-                    showPopup('Sukses!', 'Foto masuk album! 🎉');
-                } catch (e) { showPopup('Ups!', 'Gagal upload sebagian.', 'error'); }
-                input.value = '';
-            }
-        }
-
         window.askDelete = function(path) {
             tempDeletePath = path;
             window.showPopup('Hapus Kenangan?', 'Data ini bakal hilang selamanya lho...', 'confirm', () => {
@@ -958,6 +1053,7 @@
             }
         }
 
+        // --- 8. DIARY LOGIC (REVISI RENDER) ---
         function updateMoodChart(diaryData) {
             const ctx = document.getElementById('moodChart').getContext('2d');
             const moodCounts = { '🥰':0, '😂':0, '😭':0, '😡':0, '🥳':0, '😴':0 };
@@ -975,40 +1071,39 @@
             if (moodChartInstance) { moodChartInstance.data = data; moodChartInstance.update(); } 
             else { moodChartInstance = new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); }
         }
-        // --- PERBAIKAN DIARY RESPONSIVE ---
-        // Pastikan kode ini persis. Kuncinya ada di g.innerHTML = '' di awal
+
         listenToData('diary', (data) => {
             const l = document.getElementById('diaryList'); 
             if(!l) return;
-            
-            l.innerHTML = ''; // HAPUS DATA LAMA DULU
-            
+            l.innerHTML = ''; 
             const d = data ? Object.values(data).sort((a,b) => (b.timestamp||0)-(a.timestamp||0)) : [];
-            updateMoodChart(data);
+            updateMoodChart(data); 
 
-            if(d.length === 0) {
+            if(d.length===0) {
                 document.getElementById('noDiaryMsg').style.display = 'flex';
             } else {
                 document.getElementById('noDiaryMsg').style.display = 'none';
                 d.forEach(entry => {
                     const c = document.createElement('div');
-                    c.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4 animate-fade-in";
+                    c.className = "bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-pink-50 dark:border-slate-700 mb-4 fade-in";
                     c.innerHTML = `
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <h4 class="font-bold text-gray-800">${entry.title||"Tanpa Judul"}</h4>
-                                <div class="text-xs text-gray-400 mt-1">
-                                    ${entry.date||""} • ${entry.mood||"😐"}
+                                <h4 class="font-bold text-lg text-gray-800 dark:text-white">${entry.title || 'Tanpa Judul'}</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] bg-pink-100 text-pink-600 px-2 py-0.5 rounded-full font-bold">📅 ${entry.date}</span>
+                                    <span class="text-lg">${entry.mood}</span>
                                 </div>
                             </div>
-                            <button onclick="askDelete('diary/${entry.id}')" class="text-gray-300 hover:text-red-500 p-2">🗑️</button>
+                            <button onclick="askDelete('diary/${entry.id}')" class="text-gray-300 hover:text-red-500 transition p-2">🗑️</button>
                         </div>
-                        <p class="text-sm text-gray-600 whitespace-pre-line border-l-2 border-pink-300 pl-3">${entry.content||""}</p>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line leading-relaxed border-l-2 border-pink-200 pl-3 mt-2">${entry.content}</p>
                     `;
                     l.appendChild(c);
                 });
             }
         });
+
         window.addDiary = function() {
             const t = document.getElementById('diaryTitle').value, c = document.getElementById('diaryContent').value;
             if (!t || !c) return showPopup('Eits!', 'Judul & Isi wajib diisi!', 'error');
@@ -1016,52 +1111,42 @@
             writeData(`diary/${id}`, { id, title: t, date: document.getElementById('diaryDate').value, mood: document.getElementById('diaryMood').value, content: c, timestamp: Date.now() });
             document.getElementById('diaryTitle').value=''; document.getElementById('diaryContent').value=''; showPopup('Tersimpan!', 'Diary baru! ✨');
         }
-        // --- PERBAIKAN BUCKET LIST (Biar gak ngumpet & Tampil List ke Bawah) ---
-        // Cari bagian listenToData('wishlist'...) ganti dengan ini:
+
+        // --- 9. BUCKET LIST LOGIC ---
         listenToData('wishlist', (data) => {
             const g = document.getElementById('wishlistGrid');
-            g.innerHTML = ''; // Wajib clear dulu biar gak numpuk/duplikat saat update
-            
-            // Ubah CSS grid biar jadi list ke bawah (1 kolom)
-            g.className = "flex flex-col gap-4 mt-6"; 
+            g.innerHTML = '';
+            g.className = "flex flex-col gap-4 pb-24"; 
 
             const w = data ? Object.values(data).sort((a,b)=>b.timestamp-a.timestamp) : [];
-            
-            // Update counter
             document.getElementById('totalWishes').innerText = w.length;
             document.getElementById('completedWishes').innerText = w.filter(i => i.done).length;
 
-            if(w.length===0) {
-                document.getElementById('noWishMsg').classList.remove('hidden');
-            } else { 
-                document.getElementById('noWishMsg').classList.add('hidden'); 
-                w.forEach(wish => {
+            if(w.length===0) document.getElementById('noWishMsg').classList.remove('hidden');
+            else {
+                document.getElementById('noWishMsg').classList.add('hidden');
+                w.forEach(wish=>{
                     const c = document.createElement('div');
-                    // Desain kartu list yang simpel & lebar
-                    c.className = `w-full p-4 rounded-2xl border transition flex items-center justify-between gap-3 ${wish.done ? 'bg-green-50 border-green-200 opacity-75' : 'bg-white border-pink-100 shadow-sm'}`;
+                    c.className = `p-4 rounded-2xl border flex justify-between items-center transition ${wish.done?'bg-green-50 border-green-200 opacity-80':'bg-white border-pink-100 shadow-sm'}`;
                     
                     const cost = wish.cost ? new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(wish.cost)) : 'Gratis';
                     
                     c.innerHTML = `
                         <div class="flex-1">
-                            <h4 class="font-bold text-gray-800 ${wish.done ? 'line-through text-gray-500' : ''}">${wish.name}</h4>
+                            <h4 class="font-bold text-gray-800 ${wish.done?'line-through text-gray-400':''}">${wish.name}</h4>
                             <div class="text-xs text-pink-500 font-bold mt-1">${cost}</div>
-                            ${wish.link !== '#' ? `<a href="${wish.link}" target="_blank" class="text-[10px] text-blue-500 underline mt-1 block">Lihat Link 🔗</a>` : ''}
+                            ${wish.link !== '#' ? `<a href="${wish.link}" target="_blank" class="text-[10px] text-blue-500 underline block mt-1">🔗 Link</a>` : ''}
                         </div>
-                        
-                        <div class="flex flex-col gap-2">
-                            <button onclick="toggleWish('${wish.id}', ${wish.done})" class="px-3 py-2 rounded-lg text-xs font-bold ${wish.done ? 'bg-white text-green-600 border border-green-200' : 'bg-pink-500 text-white shadow'}">
-                                ${wish.done ? 'Batal' : '✅'}
-                            </button>
-                            <button onclick="askDelete('wishlist/${wish.id}')" class="px-3 py-2 rounded-lg text-xs bg-gray-100 text-gray-400 hover:text-red-500">
-                                🗑️
-                            </button>
+                        <div class="flex gap-2">
+                            <button onclick="toggleWish('${wish.id}',${wish.done})" class="px-3 py-2 rounded-lg text-xs font-bold ${wish.done?'bg-white text-green-500 border border-green-200':'bg-pink-500 text-white shadow'}">${wish.done?'Batal':'✅'}</button>
+                            <button onclick="askDelete('wishlist/${wish.id}')" class="px-3 py-2 bg-gray-100 text-gray-400 rounded-lg hover:text-red-500">🗑️</button>
                         </div>
                     `;
                     g.appendChild(c);
                 });
             }
         });
+
         window.addWish = function() {
             const n = document.getElementById('wishName').value; if(!n) return showPopup('Hmm..','Nama barang?', 'error');
             const id = Date.now().toString();
@@ -1069,6 +1154,8 @@
             document.getElementById('wishName').value=''; document.getElementById('wishCost').value=''; showPopup('Siap!', 'Masuk Bucket List!');
         }
         window.toggleWish = function(id, s) { set(ref(db, `wishlist/${id}/done`), !s); }
+
+        // --- 10. VIDEO VAULT LOGIC ---
         listenToData('videos', (data) => {
             const g = document.getElementById('videoGrid');
             g.innerHTML = ''; const v = data ? Object.values(data).reverse() : [];
@@ -1082,6 +1169,7 @@
                 g.appendChild(c);
             });}
         });
+
         window.addVideo = function() {
             const u = document.getElementById('videoUrl').value; if(!u||!u.includes('http')) return showPopup('Error','Link gak valid','error');
             const id = Date.now().toString();
