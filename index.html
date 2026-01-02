@@ -46,9 +46,6 @@
         .heartbeat { animation: heartbeat 1.5s infinite; }
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .animate-marquee { animation: marquee 8s linear infinite; } 
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        
         .animate-spin-slow { animation: spin 4s linear infinite; } 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -65,21 +62,11 @@
         .nav-active { color: #ec4899; font-weight: bold; }
         .dark .nav-active { color: #f472b6; }
 
-        /* TAB LOGIC CSS (New) */
+        /* TAB LOGIC */
         .tab-content { display: none; width: 100%; }
         .tab-content.active { display: block; animation: scaleIn 0.3s ease-out; }
 
-        /* Checkbox untuk Batch Delete */
-        .select-checkbox { display: none; }
-        .selection-mode .select-checkbox { display: block; }
-
-        /* Extra Menu Popup Animation */
-        .extra-menu-enter { transform: translateY(100%); opacity: 0; }
-        .extra-menu-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
-        .extra-menu-exit { transform: translateY(0); opacity: 1; }
-        .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
-
-        /* --- PERBAIKAN LAYOUT KHUSUS MOBILE --- */
+        /* --- PERBAIKAN LAYOUT MOBILE --- */
         .header-mobile-fix {
             top: 0;
             padding-top: max(0.5rem, env(safe-area-inset-top));
@@ -88,66 +75,111 @@
             align-items: center;
         }
 
-        .fixed.top-5.left-5 {
-            top: max(1rem, env(safe-area-inset-top));
-            z-index: 60;
-        }
-
         #header-profil {
             padding-top: calc(5rem + env(safe-area-inset-top)); 
             padding-bottom: 2rem;
         }
 
-        #wishlistGrid, #diaryList, #videoGrid {
-            padding-bottom: 12rem !important; 
-        }
-
+        /* Update Navigasi Mobile agar muat 6 tombol */
         nav.fixed.bottom-0 {
             padding-bottom: max(1rem, env(safe-area-inset-bottom));
             height: auto;
             min-height: 4.5rem;
         }
 
-        .folder-tab-active { background-color: #ec4899 !important; color: white !important; }
-        /* MARKER LUCU & IMUT */
-        .cute-marker {
-            background: transparent;
-            border: none;
+        @media (max-width: 768px) {
+            nav.md\:hidden .flex {
+                justify-content: space-around;
+                padding-left: 0.2rem;
+                padding-right: 0.2rem;
+            }
+            nav.md\:hidden button {
+                width: 16%; 
+                font-size: 8px; /* Ukuran teks lebih kecil agar tidak tabrakan */
+            }
+            /* Perbaikan Tombol Diary Mobile */
+            #diary .flex-col-mobile {
+                flex-direction: column !important;
+            }
+            #diary .flex-col-mobile button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
         }
+
+        /* MARKER MAPS */
+        .cute-marker { background: transparent; border: none; }
         .cute-pin-body {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             border: 3px solid white;
             animation: bouncePin 1s infinite alternate;
         }
-        .cute-pin-body > span {
-            transform: rotate(45deg); /* Biar emojinya tegak */
-            font-size: 20px;
-        }
-        
-        /* Warna Pin */
-        .pin-p1 { background: linear-gradient(135deg, #3b82f6, #2563eb); } /* Biru Cowok */
-        .pin-p2 { background: linear-gradient(135deg, #ec4899, #db2777); } /* Pink Cewek */
+        .cute-pin-body > span { transform: rotate(45deg); font-size: 20px; }
+        .pin-p1 { background: linear-gradient(135deg, #3b82f6, #2563eb); } 
+        .pin-p2 { background: linear-gradient(135deg, #ec4899, #db2777); } 
 
         @keyframes bouncePin {
             0% { transform: rotate(-45deg) translateY(0); }
             100% { transform: rotate(-45deg) translateY(-5px); }
         }
 
-        /* List Lokasi */
-        .location-card {
-            transition: all 0.3s ease;
+        .location-card { transition: all 0.3s ease; }
+        .location-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        /* Gaya Status Bar Game */
+        .stats-container {
+            width: 100%;
+            max-width: 200px;
+            margin-top: 1rem;
         }
-        .location-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .stat-row {
+            margin-bottom: 0.5rem;
         }
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .stat-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+        /* Warna bar berdasarkan level */
+        .bar-low { background: #f87171; }
+        .bar-mid { background: #fbbf24; }
+        .bar-high { background: #34d399; }
+
+        .stat-controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 2px;
+            justify-content: flex-end;
+        }
+        .btn-stat {
+            font-size: 10px;
+            padding: 0 5px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .dark .stat-bar-bg { background: #334155; }
+        .dark .btn-stat { background: #1e293b; border-color: #475569; color: white; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-24 transition-colors duration-500" id="bodyContent">
@@ -184,14 +216,13 @@
         <i class="fas fa-bars text-3xl drop-shadow-sm"></i>
     </button>
 
-    <div class="fixed bottom-20 right-4 z-[50] flex flex-col items-end gap-2" style="bottom: calc(5rem + env(safe-area-inset-bottom));">
-        <div id="musicWidget" class="hidden glass px-3 py-1.5 rounded-full shadow-lg items-center gap-2 max-w-[120px] bg-white dark:bg-slate-800">
-            <div class="w-full overflow-hidden whitespace-nowrap">
-                <p class="text-[10px] font-bold text-pink-500 animate-marquee inline-block">🎵 Yung Kai - Blue 🎵</p>
-            </div>
-        </div>
-        <button onclick="toggleMusic()" id="musicBtn" class="glass p-3 rounded-full shadow-lg hidden active:scale-90 transition bg-white dark:bg-slate-800">
-            <div id="musicIcon" class="animate-spin-slow text-lg">🎵</div>
+    <div class="fixed bottom-24 right-4 z-[50] md:bottom-10 md:right-10" style="bottom: calc(5.5rem + env(safe-area-inset-bottom));">
+        <button onclick="toggleMusic()" id="musicBtn" class="glass p-4 rounded-full shadow-[0_4px_15px_rgba(236,72,153,0.3)] active:scale-90 transition-all bg-white/90 dark:bg-slate-800/90 border-2 border-pink-200 dark:border-pink-500/30 group">
+            <div id="musicIcon" class="animate-spin-slow text-xl md:text-2xl">🎵</div>
+            
+            <span class="absolute right-16 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block">
+                Mute/Play Music
+            </span>
         </button>
     </div>
 
@@ -287,13 +318,14 @@
             </div>
         </nav>
 
-        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-pink-100 dark:border-slate-800 z-[45] pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
-            <div class="flex justify-between items-center h-16 px-2 text-[10px] font-bold text-gray-400 dark:text-gray-500">
-                <button onclick="switchTab('header-profil')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95 nav-active" id="mob-nav-header-profil"><span class="text-xl">👤</span>Profil</button>
-                <button onclick="switchTab('gallery')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-gallery"><span class="text-xl">📸</span>Memo</button>
-                <button onclick="switchTab('wishlist')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-wishlist"><span class="text-xl">✈️</span>List</button>
-                <button onclick="switchTab('diary')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-diary"><span class="text-xl">📖</span>Diary</button>
-                <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative transition-all active:scale-95"><span class="text-xl">📲</span>Lainnya</button>
+        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-pink-100 dark:border-slate-800 z-[45] pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-between items-center h-16 px-1 text-[9px] font-bold text-gray-400">
+                <button onclick="switchTab('header-profil')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all nav-active" id="mob-nav-header-profil"><span class="text-xl">👤</span>Profil</button>
+                <button onclick="switchTab('gallery')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all" id="mob-nav-gallery"><span class="text-xl">📸</span>Memo</button>
+                <button onclick="switchTab('wishlist')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all" id="mob-nav-wishlist"><span class="text-xl">✈️</span>List</button>
+                <button onclick="switchTab('diary')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all" id="mob-nav-diary"><span class="text-xl">📖</span>Diary</button>
+                <button onclick="switchTab('maps')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all" id="mob-nav-maps"><span class="text-xl">🗺️</span>Maps</button>
+                <button onclick="switchTab('videos')" class="nav-item flex flex-col items-center gap-1 active:scale-95 transition-all" id="mob-nav-videos"><span class="text-xl">🔗</span>Vault</button>
             </div>
         </nav>
 
@@ -373,6 +405,9 @@
                         <input type="file" id="uploadP1" class="hidden" accept="image/*" onchange="changeProfilePic(this, 'p1')">
                         <h2 id="nameP1" contenteditable="true" onblur="saveProfileText('p1', 'name', 'nameP1')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg focus:bg-white dark:focus:bg-slate-800 outline-none">Asep</h2>
                         <p id="statusP1" contenteditable="true" onblur="saveProfileText('p1', 'status', 'statusP1')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 focus:bg-white dark:focus:bg-slate-800 outline-none">The King 👑</p>
+                        <div class="stats-container mx-auto" id="statsP1">
+                            </div>
+                        <button onclick="addNewStat('p1')" class="text-[9px] mt-2 font-bold text-blue-500 opacity-50 hover:opacity-100">+ Tambah Sifat</button>
                     </div>
 
                     <div class="order-3 md:order-2 flex flex-col items-center justify-center">
@@ -391,6 +426,9 @@
                         <input type="file" id="uploadP2" class="hidden" accept="image/*" onchange="changeProfilePic(this, 'p2')">
                         <h2 id="nameP2" contenteditable="true" onblur="saveProfileText('p2', 'name', 'nameP2')" class="text-2xl font-bold text-gray-800 dark:text-white px-3 rounded-lg focus:bg-white dark:focus:bg-slate-800 outline-none">Udel</h2>
                         <p id="statusP2" contenteditable="true" onblur="saveProfileText('p2', 'status', 'statusP2')" class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1 italic px-2 focus:bg-white dark:focus:bg-slate-800 outline-none">The Queen 👑</p>
+                        <div class="stats-container mx-auto" id="statsP2">
+                            </div>
+                        <button onclick="addNewStat('p2')" class="text-[9px] mt-2 font-bold text-pink-500 opacity-50 hover:opacity-100">+ Tambah Sifat</button>
                     </div>
                 </div>
             </div>
@@ -450,23 +488,29 @@
 
         <section id="diary" class="py-20 px-4 bg-white dark:bg-slate-900 tab-content">
             <div class="max-w-5xl mx-auto px-4">
-                <h2 class="text-3xl font-bold mb-6 text-center">Shared Diary 📖</h2>
+                <h2 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">Shared Diary 📖</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
                         <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
-                            <input type="text" id="diaryTitle" placeholder="Judul momen hari ini..." class="w-full p-3 bg-white dark:bg-slate-900 rounded-xl text-sm font-bold outline-none mb-2 shadow-sm">
-                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong, ada kejadian apa?..." class="w-full p-3 bg-white dark:bg-slate-900 text-sm outline-none resize-none rounded-xl shadow-sm mb-2"></textarea>
-                            <div class="flex gap-2">
-                                <select id="diaryMood" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xl shadow-sm border border-gray-200 dark:border-slate-700">
-                                    <option value="🥰">🥰 Happy</option>
-                                    <option value="😂">😂 Lucu</option>
-                                    <option value="😭">😭 Sedih</option>
-                                    <option value="😡">😡 Marah</option>
-                                    <option value="😴">😴 Capek</option>
-                                </select>
-                                <input type="date" id="diaryDate" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xs shadow-sm flex-1 border border-gray-200 dark:border-slate-700">
-                                <button onclick="saveDiary()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 rounded-xl font-bold text-sm shadow-lg transition transform active:scale-95">Simpan</button>
+                            <input type="text" id="diaryTitle" placeholder="Judul momen hari ini..." class="w-full p-3 bg-white dark:bg-slate-900 rounded-xl text-sm font-bold outline-none mb-2 shadow-sm dark:text-white">
+                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong, ada kejadian apa?..." class="w-full p-3 bg-white dark:bg-slate-900 text-sm outline-none resize-none rounded-xl shadow-sm mb-2 dark:text-white"></textarea>
+                            
+                            <div class="flex flex-wrap md:flex-nowrap gap-2">
+                                <div class="flex gap-2 flex-1 min-w-[200px]">
+                                    <select id="diaryMood" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xl shadow-sm border border-gray-200 dark:border-slate-700 outline-none">
+                                        <option value="🥰">🥰</option>
+                                        <option value="😂">😂</option>
+                                        <option value="😭">😭</option>
+                                        <option value="😡">😡</option>
+                                        <option value="😴">😴</option>
+                                    </select>
+                                    <input type="date" id="diaryDate" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xs shadow-sm flex-1 border border-gray-200 dark:border-slate-700 outline-none dark:text-white">
+                                </div>
+                                
+                                <button onclick="saveDiary()" class="w-full md:w-auto bg-pink-500 hover:bg-pink-600 text-white px-8 py-2.5 rounded-xl font-bold text-sm shadow-lg transition transform active:scale-95 shrink-0">
+                                    Simpan ✨
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -474,14 +518,14 @@
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-pink-100 dark:border-slate-700 shadow-lg flex flex-col justify-center">
                         <div class="flex justify-between items-center mb-2 border-b pb-2 dark:border-slate-700">
                             <h3 class="font-bold text-sm text-gray-500">Statistik Mood</h3>
-                            <input type="month" id="diaryMonthFilter" class="text-xs p-1 rounded border bg-gray-50 dark:bg-slate-900" onchange="renderDiary()">
+                            <input type="month" id="diaryMonthFilter" class="text-xs p-1 rounded border bg-gray-50 dark:bg-slate-900 dark:text-white dark:border-slate-600" onchange="renderDiary()">
                         </div>
                         
                         <div class="flex items-center gap-4">
                             <div class="w-24 h-24 flex-shrink-0">
                                 <canvas id="moodChart"></canvas>
                             </div>
-                            <div id="moodLegend" class="flex-1 text-xs space-y-1 grid grid-cols-2 gap-x-2">
+                            <div id="moodLegend" class="flex-1 text-xs space-y-1 grid grid-cols-2 gap-x-2 text-gray-600 dark:text-gray-300">
                                 </div>
                         </div>
                         
@@ -661,7 +705,8 @@
                     document.getElementById('diaryMonthFilter').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
                     
                     setTimeout(initMap, 500); // Delay dikit biar map loading bener
-                    renderDiary(); 
+                    renderDiary();
+                    window.loadStats(); 
                 } else {
                     window.showPopup('Gagal', 'Password salah! (Default: 1234)', 'error');
                     document.getElementById('userPasswordInput').value = '';
@@ -711,7 +756,7 @@
                 isMusicPlaying = true;
             } else { 
                 audio.pause(); 
-                icon.innerHTML = '🔇'; 
+                icon.innerHTML = '🔇'; // Ikon mute
                 icon.classList.remove('animate-spin-slow'); 
                 isMusicPlaying = false;
             }
@@ -1601,7 +1646,88 @@
         });
 
         console.log("Script App Loaded Correctly!");
+        // --- FITUR GAME STATS ---
 
+        // Fungsi mengambil data stats
+        window.loadStats = function() {
+            onValue(ref(db, 'stats'), (snapshot) => {
+                const data = snapshot.val() || {};
+                renderStats('p1', data.p1 || { Loyalty: 90, Humor: 85, Patience: 70 });
+                renderStats('p2', data.p2 || { Loyalty: 95, Humor: 80, Patience: 85 });
+            });
+        }
+
+        function renderStats(user, stats) {
+            const container = document.getElementById(`stats${user.toUpperCase()}`);
+            if(!container) return;
+            container.innerHTML = '';
+
+            Object.entries(stats).forEach(([name, level]) => {
+                const colorClass = level < 40 ? 'bar-low' : (level < 80 ? 'bar-mid' : 'bar-high');
+                const div = document.createElement('div');
+                div.className = 'stat-row group';
+                div.innerHTML = `
+                    <div class="stat-label">
+                        <span contenteditable="true" onblur="renameStat('${user}', '${name}', this.innerText)" class="outline-none">${name}</span>
+                        <span>LVL ${level}</span>
+                    </div>
+                    <div class="stat-bar-bg">
+                        <div class="stat-bar-fill ${colorClass}" style="width: ${level}%"></div>
+                    </div>
+                    <div class="stat-controls opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="btn-stat" onclick="updateStatLevel('${user}', '${name}', -5)">-</button>
+                        <button class="btn-stat" onclick="updateStatLevel('${user}', '${name}', 5)">+</button>
+                        <button class="btn-stat text-red-400" onclick="deleteStat('${user}', '${name}')">×</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.updateStatLevel = function(user, statName, change) {
+            get(ref(db, `stats/${user}/${statName}`)).then((snap) => {
+                let current = snap.val() || 0;
+                let next = Math.min(100, Math.max(0, current + change));
+                set(ref(db, `stats/${user}/${statName}`), next);
+            });
+        }
+
+        window.addNewStat = function(user) {
+            // Pastikan showInputPopup sudah kamu buat sebelumnya
+            window.showInputPopup("✨ Tambah Sifat Baru:", (name) => {
+                if (name) {
+                    // Kita simpan ke database dengan nilai awal 50
+                    const statRef = ref(db, `stats/${user}/${name}`);
+                    set(statRef, 50).then(() => {
+                        showPopup("Berhasil!", `Sifat ${name} ditambahkan!`);
+                    }).catch((err) => {
+                        showPopup("Gagal", "Error simpan data", "error");
+                    });
+                }
+            });
+        }
+
+        window.deleteStat = function(user, name) {
+            remove(ref(db, `stats/${user}/${name}`));
+        }
+
+        window.renameStat = function(user, oldName, newName) {
+            newName = newName.trim();
+            if(!newName || oldName === newName) return;
+            
+            const oldRef = ref(db, `stats/${user}/${oldName}`);
+            get(oldRef).then((snap) => {
+                const val = snap.val();
+                const updates = {};
+                updates[`stats/${user}/${newName}`] = val;
+                updates[`stats/${user}/${oldName}`] = null;
+                update(ref(db), updates);
+            });
+        }
+
+        // Panggil fungsi loadStats di dalam checkUserPassword atau inisialisasi awal
+        // Tambahkan baris ini di dalam fungsi checkUserPassword:
+        // loadStats();
     </script>
 </body>
 </html>
