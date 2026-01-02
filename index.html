@@ -747,6 +747,10 @@
                 
                 // Efek Confetti biar makin rame
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                
+                if(typeof Android !== 'undefined') {
+                    Android.showNotification("Pesan Cinta 💌", `${data.sender} kangen berat sama kamu!`);
+                }
             }
         });
         // --- FUNGSI NAVIGASI ---
