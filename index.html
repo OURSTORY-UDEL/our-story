@@ -43,6 +43,11 @@
         .float-anim { animation: float 6s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
         
+        .float-anim-delay { 
+            animation: float 6s ease-in-out infinite; 
+            animation-delay: 2s; /* Jeda 2 detik agar gerakannya gantian */
+        }
+
         .heartbeat { animation: heartbeat 1.5s infinite; }
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
@@ -1763,6 +1768,27 @@
         // Panggil fungsi loadStats di dalam checkUserPassword atau inisialisasi awal
         // Tambahkan baris ini di dalam fungsi checkUserPassword:
         // loadStats();
+        // --- FITUR AUTO PAUSE SAAT PINDAH TAB ---
+        document.addEventListener("visibilitychange", () => {
+            const audio = document.getElementById('bgAudio');
+            const icon = document.getElementById('musicIcon');
+
+            if (document.hidden) {
+                // Jika tab tidak dilihat (pindah tab/minimize)
+                audio.pause();
+                if(icon) icon.classList.remove('animate-spin-slow');
+            } else {
+                // Jika user balik lagi ke web
+                // Kita hanya putar lagi kalau sebelumnya statusnya memang sedang 'Playing'
+                if (isMusicPlaying) {
+                    audio.play().catch(e => console.log("Autoplay dicegah browser"));
+                    if(icon) {
+                        icon.innerHTML = '🎵';
+                        icon.classList.add('animate-spin-slow');
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
