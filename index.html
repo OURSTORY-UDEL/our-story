@@ -722,7 +722,28 @@
                 }
             });
         }
+        // --- NOTIFIKASI REALTIME LISTENER ---
+        onValue(ref(db, 'notifications/missYou'), (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
 
+            // Cek apakah notifikasi ini ditujukan untuk user yang sedang login sekarang
+            // Dan pastikan notifikasinya baru (kurang dari 10 detik yang lalu)
+            const isForMe = data.target === window.currentUser;
+            const isNew = (Date.now() - data.timestamp) < 10000; 
+
+            if (isForMe && isNew) {
+                // Mainkan suara (Opsional, pakai suara default browser)
+                const msg = new SpeechSynthesisUtterance(`Sayang, ada pesan kangen dari ${data.sender}`);
+                window.speechSynthesis.speak(msg);
+
+                // Tampilkan Pop-up Besar
+                window.showPopup("CIEEE KANGEN! ❤️", `${data.sender} lagi kangen berat sama kamu sekarang!`, 'success');
+                
+                // Efek Confetti biar makin rame
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            }
+        });
         // --- FUNGSI NAVIGASI ---
         window.switchTab = function(tabId) {
             const tabs = document.querySelectorAll('.tab-content');
@@ -1166,12 +1187,26 @@
 
         window.processMissYou = function(role) {
             window.closeIdentityPopup();
-            if (typeof Android !== 'undefined') {
-                Android.showNotification("Ada yang kangen! ❤️", `Si ${role === 'p1' ? nameP1 : nameP2} lagi kangen berat nih. Buruan chat!`);
-                Android.showToast("Notifikasi Kangen terkirim ke HP! 🔔");
-            } else {
-                window.showPopup("Kangen Terkirim!", "Pesan kangen virtual sudah dikirim (Simulasi).");
-            }
+            
+            const senderName = role === 'p1' ? nameP1 : nameP2;
+            const targetName = role === 'p1' ? nameP2 : nameP1;
+            const targetWA = role === 'p1' ? contactP2 : contactP1; // Kirim ke nomor pasangan
+            const message = `Sayang ${targetName}... ${senderName} lagi kangen banget sama kamu! ❤️ Cek aplikasi kita yuk!`;
+
+            // 1. KIRIM SINYAL KE FIREBASE (Agar muncul di web pasangan secara realtime)
+            const missRef = ref(db, 'notifications/missYou');
+            set(missRef, {
+                sender: senderName,
+                target: role === 'p1' ? 'p2' : 'p1', // Siapa yang harus dapet notif
+                timestamp: Date.now()
+            });
+
+            // 2. KIRIM VIA WHATSAPP (Notifikasi HP yang paling terasa)
+            const waUrl = `https://api.whatsapp.com/send?phone=${targetWA}&text=${encodeURIComponent(message)}`;
+            
+            window.showPopup("Kangen Terkirim!", `Sinyal kangen sudah dikirim ke ${targetName}!`, 'success', () => {
+                window.open(waUrl, '_blank');
+            });
         }
 
         window.toggleSettings = function() { document.getElementById('settingsPanel').classList.toggle('hidden'); }
