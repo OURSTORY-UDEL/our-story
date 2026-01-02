@@ -9,12 +9,16 @@
     <meta name="theme-color" content="#ec4899">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -61,6 +65,10 @@
         .nav-active { color: #ec4899; font-weight: bold; }
         .dark .nav-active { color: #f472b6; }
 
+        /* TAB LOGIC CSS (New) */
+        .tab-content { display: none; width: 100%; }
+        .tab-content.active { display: block; animation: scaleIn 0.3s ease-out; }
+
         /* Checkbox untuk Batch Delete */
         .select-checkbox { display: none; }
         .selection-mode .select-checkbox { display: block; }
@@ -72,8 +80,6 @@
         .extra-menu-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
 
         /* --- PERBAIKAN LAYOUT KHUSUS MOBILE --- */
-
-        /* 1. Header Title (Our Story) - Sejajar Hamburger */
         .header-mobile-fix {
             top: 0;
             padding-top: max(0.5rem, env(safe-area-inset-top));
@@ -82,32 +88,66 @@
             align-items: center;
         }
 
-        /* 2. Hamburger Menu - Turun dikit biar sejajar */
         .fixed.top-5.left-5 {
             top: max(1rem, env(safe-area-inset-top));
             z-index: 60;
         }
 
-        /* 3. Header Profil - Padding biar gak kepotong */
         #header-profil {
             padding-top: calc(5rem + env(safe-area-inset-top)); 
             padding-bottom: 2rem;
         }
 
-        /* 4. Scroll Fix (Biar item terakhir tidak ngumpet di input) */
         #wishlistGrid, #diaryList, #videoGrid {
             padding-bottom: 12rem !important; 
         }
 
-        /* 5. Navigasi Bawah - Safe Area */
         nav.fixed.bottom-0 {
             padding-bottom: max(1rem, env(safe-area-inset-bottom));
             height: auto;
             min-height: 4.5rem;
         }
 
-        /* Style Folder Album */
         .folder-tab-active { background-color: #ec4899 !important; color: white !important; }
+        /* MARKER LUCU & IMUT */
+        .cute-marker {
+            background: transparent;
+            border: none;
+        }
+        .cute-pin-body {
+            width: 40px;
+            height: 40px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 3px solid white;
+            animation: bouncePin 1s infinite alternate;
+        }
+        .cute-pin-body > span {
+            transform: rotate(45deg); /* Biar emojinya tegak */
+            font-size: 20px;
+        }
+        
+        /* Warna Pin */
+        .pin-p1 { background: linear-gradient(135deg, #3b82f6, #2563eb); } /* Biru Cowok */
+        .pin-p2 { background: linear-gradient(135deg, #ec4899, #db2777); } /* Pink Cewek */
+
+        @keyframes bouncePin {
+            0% { transform: rotate(-45deg) translateY(0); }
+            100% { transform: rotate(-45deg) translateY(-5px); }
+        }
+
+        /* List Lokasi */
+        .location-card {
+            transition: all 0.3s ease;
+        }
+        .location-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-900 dark:to-slate-800 text-gray-700 dark:text-gray-200 overflow-x-hidden pb-24 transition-colors duration-500" id="bodyContent">
@@ -120,10 +160,16 @@
             </div>
         </div>
         <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Our Love App</h1>
-        <p class="text-gray-500 dark:text-gray-300 mb-8 text-sm">Spesial buat kamu...</p>
-        <button onclick="enterApp()" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-4 px-12 rounded-full shadow-xl hover:scale-105 transition transform active:scale-95 heartbeat">
-            Buka Sekarang ❤️
-        </button>
+        <p class="text-gray-500 dark:text-gray-300 mb-8 text-sm">Siapa yang mau masuk?</p>
+        
+        <div class="flex gap-4">
+            <button onclick="selectUser('p1')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform active:scale-95 transition flex flex-col items-center">
+                <span class="text-2xl mb-1">🤴</span> Asep
+            </button>
+            <button onclick="selectUser('p2')" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform active:scale-95 transition flex flex-col items-center">
+                <span class="text-2xl mb-1">👸</span> Udel
+            </button>
+        </div>
     </div>
 
     <audio id="bgAudio" loop>
@@ -164,15 +210,16 @@
         </div>
     </div>
 
-    <div id="pinOverlay" class="hidden fixed inset-0 bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400 z-[200] flex flex-col items-center justify-center text-white transition duration-700">
-        <div class="text-center p-8 w-full max-w-sm scale-in">
-            <div class="text-6xl mb-4 animate-bounce">🔒</div>
-            <h1 class="text-3xl font-bold mb-2">Locked App</h1>
-            <p class="mb-8 text-pink-100 opacity-90 text-sm">Masukin PIN rahasia kita.</p>
-            <div class="flex flex-col gap-4 items-center w-full">
-                <input type="password" id="pinInput" maxlength="6" class="text-center text-3xl text-pink-600 p-4 rounded-2xl w-3/4 tracking-[0.5em] focus:outline-none focus:ring-4 focus:ring-pink-200 shadow-2xl font-bold placeholder-pink-200 bg-white" placeholder="****">
-                <button onclick="checkPin()" class="bg-white/20 border border-white/50 text-white font-bold py-3 px-12 rounded-full shadow-lg hover:bg-white hover:text-pink-500 transition transform active:scale-95 w-3/4">Buka ❤️</button>
-            </div>
+    <div id="pinOverlay" class="hidden fixed inset-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl z-[290] flex flex-col items-center justify-center text-gray-800 dark:text-white transition-all duration-500">
+        <div class="text-center p-8 w-full max-w-sm scale-in bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-700">
+            <div id="loginAvatar" class="text-6xl mb-4 animate-bounce">🔒</div>
+            <h1 class="text-2xl font-bold mb-1">Login User</h1>
+            <p id="loginGreeting" class="mb-6 text-gray-400 text-sm">Masukkan password kamu.</p>
+            
+            <input type="password" id="userPasswordInput" class="text-center text-2xl text-gray-700 dark:text-white p-4 rounded-xl w-full focus:outline-none bg-gray-100 dark:bg-slate-900 border-2 border-transparent focus:border-pink-300 transition-all mb-4" placeholder="Password">
+            
+            <button onclick="checkUserPassword()" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white w-full py-4 rounded-xl font-bold shadow-lg transform active:scale-95 transition">MASUK</button>
+            <button onclick="cancelLogin()" class="mt-4 text-xs text-gray-400 hover:text-pink-500">Kembali</button>
         </div>
     </div>
 
@@ -229,12 +276,12 @@
             <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
                 <div class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 tracking-wider">OUR STORY 💖</div>
                 <div class="flex gap-8 text-sm font-bold text-gray-500 dark:text-gray-400">
-                    <a href="#header-profil" class="hover:text-pink-500 transition">Profil</a>
-                    <a href="#gallery" class="hover:text-pink-500 transition">Memories</a>
-                    <a href="#wishlist" class="hover:text-pink-500 transition">Bucket List</a>
-                    <a href="#diary" class="hover:text-pink-500 transition">Diary</a>
-                    <a href="#maps" class="hover:text-pink-500 transition">Maps</a>
-                    <a href="#videos" class="hover:text-pink-500 transition">Vault</a>
+                    <button onclick="switchTab('header-profil')" class="nav-item hover:text-pink-500 transition nav-active" id="nav-header-profil">Profil</button>
+                    <button onclick="switchTab('gallery')" class="nav-item hover:text-pink-500 transition" id="nav-gallery">Memories</button>
+                    <button onclick="switchTab('wishlist')" class="nav-item hover:text-pink-500 transition" id="nav-wishlist">Bucket List</button>
+                    <button onclick="switchTab('diary')" class="nav-item hover:text-pink-500 transition" id="nav-diary">Diary</button>
+                    <button onclick="switchTab('maps')" class="nav-item hover:text-pink-500 transition" id="nav-maps">Maps</button>
+                    <button onclick="switchTab('videos')" class="nav-item hover:text-pink-500 transition" id="nav-videos">Vault</button>
                     <button onclick="toggleSettings()" class="text-pink-500 text-lg hover:scale-110 transition">⚙️</button>
                 </div>
             </div>
@@ -242,13 +289,19 @@
 
         <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-pink-100 dark:border-slate-800 z-[45] pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
             <div class="flex justify-between items-center h-16 px-2 text-[10px] font-bold text-gray-400 dark:text-gray-500">
-                <a href="#header-profil" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">👤</span>Profil</a>
-                <a href="#gallery" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📸</span>Memo</a>
-                <a href="#wishlist" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">✈️</span>List</a>
-                <a href="#diary" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95"><span class="text-xl">📖</span>Diary</a>
+                <button onclick="switchTab('header-profil')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95 nav-active" id="mob-nav-header-profil"><span class="text-xl">👤</span>Profil</button>
+                <button onclick="switchTab('gallery')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-gallery"><span class="text-xl">📸</span>Memo</button>
+                <button onclick="switchTab('wishlist')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-wishlist"><span class="text-xl">✈️</span>List</button>
+                <button onclick="switchTab('diary')" class="nav-item flex flex-col items-center gap-1 w-1/6 active:text-pink-500 transition-all active:scale-95" id="mob-nav-diary"><span class="text-xl">📖</span>Diary</button>
                 <button onclick="toggleExtraMenu()" class="flex flex-col items-center gap-1 w-1/6 active:text-pink-500 relative transition-all active:scale-95"><span class="text-xl">📲</span>Lainnya</button>
             </div>
         </nav>
+
+        <div id="extraMenu" class="hidden fixed bottom-20 right-4 z-[46] bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-pink-100 dark:border-slate-700 p-2 flex flex-col gap-2 scale-in">
+            <button onclick="switchTab('maps'); toggleExtraMenu()" class="flex items-center gap-3 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"><span class="text-xl">🗺️</span> Maps</button>
+            <button onclick="switchTab('videos'); toggleExtraMenu()" class="flex items-center gap-3 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"><span class="text-xl">🔗</span> Vault</button>
+            <button onclick="toggleSettings(); toggleExtraMenu()" class="flex items-center gap-3 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-xl"><span class="text-xl">⚙️</span> Setting</button>
+        </div>
 
         <div id="settingsPanel" class="hidden fixed top-0 left-0 h-screen w-full md:w-80 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-6 shadow-2xl z-[100] border-r border-pink-100 dark:border-slate-700 fade-in overflow-y-auto text-gray-700 dark:text-gray-200">
             <div class="flex justify-between items-center mb-8 border-b dark:border-slate-600 pb-4">
@@ -306,7 +359,7 @@
             </div>
         </div>
 
-        <header id="header-profil" class="relative overflow-hidden">
+        <header id="header-profil" class="relative overflow-hidden tab-content active">
             <div class="absolute top-0 left-0 w-64 h-64 bg-pink-200 dark:bg-slate-700 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
             <div class="absolute top-0 right-0 w-64 h-64 bg-purple-200 dark:bg-slate-800 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
             
@@ -343,7 +396,7 @@
             </div>
         </header>
         
-        <section id="gallery" class="py-20 px-4 max-w-7xl mx-auto w-full">
+        <section id="gallery" class="py-20 px-4 max-w-7xl mx-auto w-full tab-content">
             <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Our Memories 📸</h2>
@@ -365,11 +418,24 @@
             </div>
         </section>
 
-        <section id="wishlist" class="py-20 px-4 bg-pink-50 dark:bg-slate-900 border-t border-pink-100 dark:border-slate-800 transition-colors duration-500 rounded-t-[3rem] mt-10">
+        <section id="wishlist" class="py-20 px-4 bg-pink-50 dark:bg-slate-900 border-t border-pink-100 dark:border-slate-800 transition-colors duration-500 rounded-t-[3rem] mt-10 tab-content">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Bucket List ✈️</h2>
                     <p class="text-gray-500 dark:text-gray-400">Mimpi-mimpi kita yang harus diwujudkan.</p>
+                </div>
+                <div class="w-full max-w-xl mx-auto bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-lg border border-pink-100 dark:border-slate-700 mb-8">
+                    <div class="flex flex-col gap-2">
+                        <input type="text" id="wishName" placeholder="Rencana baru..." class="w-full p-3 bg-gray-50 dark:bg-slate-900 rounded-xl text-sm outline-none font-bold">
+                        <div class="flex gap-2">
+                            <input type="number" id="wishCost" placeholder="Rp 0" class="w-1/3 p-2 bg-gray-50 dark:bg-slate-900 rounded-lg text-xs outline-none">
+                            <input type="url" id="wishLink" placeholder="Link (Opsional)" class="w-1/3 p-2 bg-gray-50 dark:bg-slate-900 rounded-lg text-xs outline-none">
+                            <button onclick="pickMapLocationForWish()" class="w-1/3 bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-lg text-xs font-bold hover:bg-blue-200 transition flex items-center justify-center gap-1">
+                                📍 <span id="locStatus">Pilih Lokasi</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="window.addWish()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 rounded-xl shadow-lg mt-3 transition transform active:scale-95">➕ Tambah Ke List</button>
                 </div>
                 <div class="md:col-span-2">
                     <div class="flex gap-4 mb-6 text-sm font-bold overflow-x-auto pb-2 no-scrollbar">
@@ -379,70 +445,91 @@
                     <div id="wishlistGrid" class="flex flex-col gap-4"></div>
                     <div id="noWishMsg" class="hidden text-center text-gray-400 dark:text-gray-500 py-20"><span class="text-4xl">🗺️</span><br>Belum ada rencana.</div>
                 </div>
+            </div>
+        </section>
+
+        <section id="diary" class="py-20 px-4 bg-white dark:bg-slate-900 tab-content">
+            <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-6 text-center">Shared Diary 📖</h2>
                 
-                <div class="fixed md:static bottom-20 left-0 w-full px-4 z-30 md:z-0 md:w-auto">
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-slate-700 max-w-xl mx-auto flex gap-2 items-center">
-                        <div class="flex-1 flex flex-col gap-2">
-                            <input type="text" id="wishName" placeholder="Rencana baru..." class="w-full p-3 bg-gray-50 dark:bg-slate-700 rounded-xl text-sm outline-none font-bold">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm">
+                            <input type="text" id="diaryTitle" placeholder="Judul momen hari ini..." class="w-full p-3 bg-white dark:bg-slate-900 rounded-xl text-sm font-bold outline-none mb-2 shadow-sm">
+                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong, ada kejadian apa?..." class="w-full p-3 bg-white dark:bg-slate-900 text-sm outline-none resize-none rounded-xl shadow-sm mb-2"></textarea>
                             <div class="flex gap-2">
-                                <input type="number" id="wishCost" placeholder="Rp 0" class="w-1/2 p-2 bg-gray-50 dark:bg-slate-700 rounded-lg text-xs outline-none">
-                                <input type="url" id="wishLink" placeholder="Link (Opsional)" class="w-1/2 p-2 bg-gray-50 dark:bg-slate-700 rounded-lg text-xs outline-none">
-                            </div>
-                        </div>
-                        <button onclick="window.addWish()" class="bg-pink-500 hover:bg-pink-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center font-bold text-xl transition transform active:scale-95">➕</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="diary" class="py-20 px-2 md:px-4 bg-white dark:bg-slate-900 border-t border-pink-50 dark:border-slate-800 transition-colors duration-500">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Shared Diary 📖</h2>
-                    <p class="text-gray-500 dark:text-gray-400">Tulis cerita, perasaan, atau hal lucu hari ini.</p>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                    <div class="lg:col-span-4 h-fit space-y-6">
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-lg border border-pink-100 dark:border-slate-700">
-                            <h4 class="text-sm font-bold text-gray-600 dark:text-gray-300 mb-3 text-center uppercase tracking-wider">Mood Meter</h4>
-                            <div class="relative w-full h-48"><canvas id="moodChart"></canvas></div>
-                            <p class="text-xs text-center text-gray-400 dark:text-gray-500 mt-2 italic" id="moodSummary">Belum ada data...</p>
-                        </div>
-                        <div class="bg-gradient-to-br from-pink-50 to-white dark:from-slate-800 dark:to-slate-900 p-4 rounded-3xl shadow-xl border border-pink-100 dark:border-slate-700">
-                            <input type="text" id="diaryTitle" placeholder="Judul momen..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white font-bold text-gray-700">
-                            <div class="flex gap-3 mb-4">
-                                <input type="date" id="diaryDate" class="w-2/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm text-sm">
-                                <select id="diaryMood" class="w-1/3 p-3 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm text-2xl text-center">
-                                    <option>🥰</option><option>😂</option><option>😭</option><option>😡</option><option>🥳</option><option>😴</option>
+                                <select id="diaryMood" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xl shadow-sm border border-gray-200 dark:border-slate-700">
+                                    <option value="🥰">🥰 Happy</option>
+                                    <option value="😂">😂 Lucu</option>
+                                    <option value="😭">😭 Sedih</option>
+                                    <option value="😡">😡 Marah</option>
+                                    <option value="😴">😴 Capek</option>
                                 </select>
+                                <input type="date" id="diaryDate" class="p-2 rounded-xl bg-white dark:bg-slate-900 text-xs shadow-sm flex-1 border border-gray-200 dark:border-slate-700">
+                                <button onclick="saveDiary()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 rounded-xl font-bold text-sm shadow-lg transition transform active:scale-95">Simpan</button>
                             </div>
-                            <textarea id="diaryContent" rows="4" placeholder="Ceritain dong..." class="w-full mb-4 p-4 rounded-xl border border-gray-100 dark:border-slate-600 bg-white dark:bg-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 dark:text-white resize-none text-gray-600"></textarea>
-                            <button onclick="window.addDiary()" class="w-full bg-gray-800 dark:bg-slate-600 hover:bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
-                                <span>✨ Simpan Diary</span>
-                            </button>
                         </div>
                     </div>
-                    <div class="lg:col-span-8 space-y-6" id="diaryList">
-                        <div id="noDiaryMsg" class="text-center text-gray-400 dark:text-gray-500 py-24 bg-gray-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center"><span class="text-5xl mb-4 opacity-50">📝</span>Belum ada cerita.</div>
+
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-pink-100 dark:border-slate-700 shadow-lg flex flex-col justify-center">
+                        <div class="flex justify-between items-center mb-2 border-b pb-2 dark:border-slate-700">
+                            <h3 class="font-bold text-sm text-gray-500">Statistik Mood</h3>
+                            <input type="month" id="diaryMonthFilter" class="text-xs p-1 rounded border bg-gray-50 dark:bg-slate-900" onchange="renderDiary()">
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 h-24 flex-shrink-0">
+                                <canvas id="moodChart"></canvas>
+                            </div>
+                            <div id="moodLegend" class="flex-1 text-xs space-y-1 grid grid-cols-2 gap-x-2">
+                                </div>
+                        </div>
+                        
+                        <div id="moodSuggestionBox" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
+                            <p class="text-[10px] font-bold text-blue-500 uppercase mb-1">💡 Saran Untuk Pasangan:</p>
+                            <p id="moodSuggestionText" class="text-xs text-gray-600 dark:text-gray-300 italic">Belum ada data...</p>
+                        </div>
                     </div>
                 </div>
+
+                <div id="diaryList" class="space-y-4 pb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
             </div>
         </section>
 
-        <section id="maps" class="py-20 px-4 bg-blue-50 dark:bg-slate-800 border-t border-blue-100 dark:border-slate-700 transition-colors duration-500">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-10">
+        <section id="maps" class="py-20 px-4 bg-blue-50 dark:bg-slate-800 border-t border-blue-100 dark:border-slate-700 transition-colors duration-500 tab-content pb-32">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8">
                     <h2 class="text-4xl font-bold text-blue-800 dark:text-blue-300 mb-2">Our Journey 🗺️</h2>
-                    <p class="text-blue-500 dark:text-blue-400">Klik di peta untuk menandai tempat kenangan kita.</p>
+                    <p class="text-blue-500 dark:text-blue-400">Cari tempat, tandai, dan simpan kenangan kita.</p>
                 </div>
-                <div class="bg-white dark:bg-slate-700 p-2 rounded-3xl shadow-xl border-4 border-white dark:border-slate-600 h-[500px] relative overflow-hidden group">
-                    <div id="map" class="w-full h-full z-10"></div>
-                    <div class="absolute bottom-6 left-6 z-20 bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-lg shadow text-xs font-bold text-gray-600 dark:text-gray-300">👆 Klik peta untuk tambah lokasi</div>
+                
+                <div class="bg-white dark:bg-slate-700 p-2 rounded-[2rem] shadow-xl border-4 border-white dark:border-slate-600 h-[400px] md:h-[500px] relative overflow-hidden group mb-8 z-0">
+                    <div id="map" class="w-full h-full z-10 rounded-[1.5rem]"></div>
+                    
+                    <div id="searchInfoBox" class="hidden absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white/95 dark:bg-slate-800/95 backdrop-blur px-6 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-bounce">
+                        <span class="text-2xl">📍</span>
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Lokasi Ditemukan</p>
+                            <p id="searchResultName" class="text-sm font-bold text-gray-800 dark:text-white line-clamp-1">Nama Tempat</p>
+                        </div>
+                        <button onclick="openPinInputFromSearch()" class="bg-blue-500 text-white text-xs font-bold px-3 py-2 rounded-lg ml-2 hover:bg-blue-600">Simpan</button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 shadow-lg border border-blue-100 dark:border-slate-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-xl text-gray-700 dark:text-white">📍 Daftar Lokasi (<span id="locCount">0</span>)</h3>
+                        <button onclick="map.flyTo([-6.2088, 106.8456], 10)" class="text-xs font-bold text-blue-500 bg-blue-50 dark:bg-slate-700 px-3 py-2 rounded-full">Reset View</button>
+                    </div>
+                    <div id="locationList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                    <div id="noLocMsg" class="text-center py-10 text-gray-400 text-sm hidden">Belum ada lokasi tersimpan. Cari di peta yuk!</div>
                 </div>
             </div>
         </section>
 
-        <section id="videos" class="py-20 px-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 pb-40 transition-colors duration-500">
+        <section id="videos" class="py-20 px-4 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 pb-40 transition-colors duration-500 tab-content">
             <div class="max-w-6xl mx-auto">
                 <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-10">Video & Link Vault 🔗</h2>
                 <div class="max-w-3xl mx-auto bg-gray-50 dark:bg-slate-700 p-2 pl-4 rounded-full shadow-inner mb-16 flex flex-col md:flex-row gap-2 border border-gray-200 dark:border-slate-600">
@@ -456,14 +543,14 @@
             </div>
         </section>
 
-        <footer class="bg-white dark:bg-slate-900 py-2 text-center text-gray-400 dark:text-gray-500 text-[10px] border-t dark:border-slate-800 transition-colors duration-500">
+        <footer class="fixed bottom-0 w-full bg-white/90 dark:bg-slate-900/90 py-2 text-center text-gray-400 text-[10px] backdrop-blur-sm z-[39] border-t dark:border-slate-800">
             <p>Made with 💖 by Asep & Udel</p>
         </footer>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAdB_cqR4QTYiUx9ik1ruZyXq88HqSfPVk",
@@ -476,11 +563,19 @@
             measurementId: "G-PKE0C3QKD5"
         };
 
+        // --- ERROR HANDLING AGAR SCRIPT TIDAK MATI TOTAL ---
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            console.log("Firebase Connected!");
+        } catch (error) {
+            console.error("Firebase Error:", error);
+            alert("Gagal konek ke database. Cek internet kamu ya!");
+        }
+
         const imgbbAPIKey = "45313df89cb1e741284dbeb8cbfba7f5"; 
         
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
         // --- VARIABEL GLOBAL ---
         let correctPin = "1234";
         let startRelationshipDate = new Date();
@@ -493,42 +588,133 @@
         let moodChartInstance = null;
         let map = null;
         let tempMapLatLng = null;
-
+        let tempWishLocation = null;
+        let isPickingLocation = false;
+        let currentSearchResult = null; // Menyimpan hasil search
         let selectionMode = false;
         let selectedMemories = new Set();
         
         // Variabel Gallery & Slideshow
         let currentGalleryImages = []; 
-        let currentImageIndex = 0;     
-        let currentAlbum = 'All';      
+        let currentImageIndex = 0;      
+        let currentAlbum = 'All';       
 
-        // --- 1. SYSTEM UTAMA & MUSIK ---
-        window.enterApp = function() {
-            const ws = document.getElementById('welcomeScreen');
-            ws.style.opacity = '0';
-            setTimeout(() => { ws.style.display = 'none'; }, 1000);
-            document.getElementById('pinOverlay').classList.remove('hidden');
+        // --- 1. FUNGSI UTAMA (DITARUH ATAS BIAR LANGSUNG KEBACA) ---
+        
+        // Wajib didefinisikan ke window agar bisa dipanggil dari HTML onclick
+        window.selectUser = function(user) {
+            window.currentUser = user;
+            const screen = document.getElementById('welcomeScreen');
+            const overlay = document.getElementById('pinOverlay');
             
-            const audio = document.getElementById('bgAudio');
-            const localSong = localStorage.getItem('localSong');
-            if(localSong) audio.src = localSong;
+            if(screen && overlay) {
+                screen.classList.add('hidden');
+                overlay.classList.remove('hidden');
+                
+                const name = user === 'p1' ? 'Asep' : 'Udel';
+                const icon = user === 'p1' ? '🤴' : '👸';
+                document.getElementById('loginGreeting').innerText = `Halo ${name}, masukkan passwordmu.`;
+                document.getElementById('loginAvatar').innerText = icon;
+                
+                const passInput = document.getElementById('userPasswordInput');
+                passInput.value = '';
+                setTimeout(() => passInput.focus(), 100);
+            } else {
+                console.error("Elemen HTML tidak ditemukan!");
+            }
+        }
+
+        window.cancelLogin = function() {
+            document.getElementById('pinOverlay').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+
+        window.checkUserPassword = function() {
+            const input = document.getElementById('userPasswordInput').value;
+            const userPath = `profiles/${window.currentUser}`;
             
-            audio.volume = 0.5; 
-            audio.play().then(() => {
-                isMusicPlaying = true;
-                document.getElementById('musicBtn').classList.remove('hidden');
-                document.getElementById('musicWidget').classList.remove('hidden');
-                document.getElementById('musicWidget').classList.add('flex');
-            }).catch(e => console.log("Gagal Play Otomatis:", e));
-            setTimeout(initMap, 2000);
+            get(ref(db, userPath)).then((snapshot) => {
+                const userData = snapshot.val() || {};
+                const truePass = userData.password || '1234'; 
+                
+                if(input === truePass) {
+                    document.getElementById('pinOverlay').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('opacity-0');
+                    
+                    // Audio Play
+                    const audio = document.getElementById('bgAudio');
+                    const localSong = localStorage.getItem('localSong');
+                    if(localSong) audio.src = localSong;
+                    
+                    audio.play().then(() => {
+                        isMusicPlaying = true;
+                        document.getElementById('musicIcon').innerHTML = '🎵';
+                        document.getElementById('musicIcon').classList.add('animate-spin-slow');
+                        document.getElementById('musicWidget').classList.remove('hidden');
+                        document.getElementById('musicWidget').classList.add('flex');
+                        document.getElementById('musicBtn').classList.remove('hidden');
+                    }).catch(e => console.log("Audio perlu interaksi user dulu"));
+                    
+                    // Setup UI Awal
+                    document.getElementById('diaryDate').valueAsDate = new Date();
+                    const now = new Date();
+                    document.getElementById('diaryMonthFilter').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+                    
+                    setTimeout(initMap, 500); // Delay dikit biar map loading bener
+                    renderDiary(); 
+                } else {
+                    window.showPopup('Gagal', 'Password salah! (Default: 1234)', 'error');
+                    document.getElementById('userPasswordInput').value = '';
+                }
+            }).catch(err => {
+                console.error(err);
+                // Fallback kalau offline/error db
+                if(input === '1234') {
+                     alert("Mode Offline: Login dengan pass default berhasil.");
+                     document.getElementById('pinOverlay').classList.add('hidden');
+                     document.getElementById('mainApp').classList.remove('opacity-0');
+                     setTimeout(initMap, 500);
+                }
+            });
+        }
+
+        // --- FUNGSI NAVIGASI ---
+        window.switchTab = function(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('nav-active'));
+            const navBtn = document.getElementById(`nav-${tabId}`);
+            if(navBtn) navBtn.classList.add('nav-active');
+
+            const mobBtn = document.getElementById(`mob-nav-${tabId}`);
+            if(mobBtn) mobBtn.classList.add('nav-active');
+
+            window.scrollTo(0, 0);
+            // Fix map grey area
+            if(tabId === 'maps' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 200);
+            }
         }
 
         window.toggleMusic = function() {
             const audio = document.getElementById('bgAudio');
             const icon = document.getElementById('musicIcon');
-            if (isMusicPlaying) { audio.pause(); icon.innerHTML = '🔇'; icon.classList.remove('animate-spin-slow'); } 
-            else { audio.play(); icon.innerHTML = '🎵'; icon.classList.add('animate-spin-slow'); }
-            isMusicPlaying = !isMusicPlaying;
+            
+            if (audio.paused) { 
+                audio.play(); 
+                icon.innerHTML = '🎵'; 
+                icon.classList.add('animate-spin-slow'); 
+                isMusicPlaying = true;
+            } else { 
+                audio.pause(); 
+                icon.innerHTML = '🔇'; 
+                icon.classList.remove('animate-spin-slow'); 
+                isMusicPlaying = false;
+            }
         }
 
         window.changeLocalMusic = function(input) {
@@ -536,15 +722,14 @@
             if(!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    localStorage.setItem('localSong', e.target.result);
-                    const audio = document.getElementById('bgAudio');
-                    audio.src = e.target.result;
-                    audio.play();
-                    showPopup('Berhasil!', 'Lagu diganti di HP ini aja 🎵');
-                } catch(err) {
-                    showPopup('Gagal', 'File lagu terlalu besar!', 'error');
-                }
+                localStorage.setItem('localSong', e.target.result);
+                const audio = document.getElementById('bgAudio');
+                audio.src = e.target.result;
+                audio.play();
+                isMusicPlaying = true;
+                document.getElementById('musicIcon').innerHTML = '🎵';
+                document.getElementById('musicIcon').classList.add('animate-spin-slow');
+                showPopup('Berhasil!', 'Lagu diganti di HP ini aja 🎵');
             }
             reader.readAsDataURL(file);
         }
@@ -562,25 +747,36 @@
         }
         if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
 
-        const sections = document.querySelectorAll('section');
-        const navItems = document.querySelectorAll('.nav-item');
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 200) current = section.getAttribute('id');
-            });
-            navItems.forEach(li => {
-                li.classList.remove('nav-active');
-                if (li.getAttribute('id') === `nav-${current}`) li.classList.add('nav-active');
-            });
-        });
+        window.saveDiary = function() {
+            const t = document.getElementById('diaryTitle').value;
+            const c = document.getElementById('diaryContent').value;
+            const d = document.getElementById('diaryDate').value;
+            const m = document.getElementById('diaryMood').value;
 
-        // --- 2. FITUR SLIDESHOW (LIGHTBOX) ---
+            if (!t || !c) return showPopup('Eits!', 'Judul & Isi wajib diisi!', 'error');
+            
+            const id = Date.now().toString();
+            const authorName = window.currentUser || 'Anonymous'; 
+
+            writeData(`diary/${id}`, { 
+                id: id, 
+                title: t, 
+                date: d, 
+                mood: m, 
+                content: c, 
+                timestamp: Date.now(), 
+                author: authorName 
+            });
+            
+            document.getElementById('diaryTitle').value=''; 
+            document.getElementById('diaryContent').value=''; 
+            showPopup('Tersimpan!', 'Diary baru! ✨');
+        }
+
+        // --- LIGHTBOX & UI HELPERS ---
         window.openLightbox = function(src) {
             currentImageIndex = currentGalleryImages.findIndex(img => img.url === src);
             updateLightboxImage();
-            
             const lb = document.getElementById('lightbox');
             lb.classList.remove('hidden');
             setTimeout(() => lb.classList.remove('opacity-0'), 10);
@@ -614,18 +810,22 @@
         }
         
         window.toggleExtraMenu = function() {
-            const menu = document.getElementById('extraMenu');
-            menu.classList.toggle('hidden');
+            document.getElementById('extraMenu').classList.toggle('hidden');
         }
 
-        // --- 3. HELPER & POPUP ---
+        // --- UPLOAD & POPUP ---
         async function uploadToImgBB(file) {
             const formData = new FormData();
             formData.append("image", file);
-            const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, { method: "POST", body: formData });
-            const result = await response.json();
-            if (result.success) return result.data.url;
-            throw new Error("Gagal upload");
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, { method: "POST", body: formData });
+                const result = await response.json();
+                if (result.success) return result.data.url;
+                throw new Error("Gagal upload ke ImgBB");
+            } catch (err) {
+                console.error(err);
+                throw err;
+            }
         }
 
         window.showPopup = function(title, message, type = 'success', confirmAction = null) {
@@ -675,7 +875,6 @@
             setTimeout(() => { popup.classList.add('hidden'); }, 300);
         }
 
-        // --- NEW: CUSTOM INPUT POPUP (REPLACEMENT FOR PROMPT) ---
         window.showInputPopup = function(title, callback) {
             const popup = document.getElementById('customInputPopup');
             document.getElementById('customInputTitle').innerText = title;
@@ -686,7 +885,6 @@
             field.focus();
 
             const btn = document.getElementById('customInputConfirmBtn');
-            // Remove old listeners to avoid multiple firings
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             
@@ -707,34 +905,174 @@
             setTimeout(() => { popup.classList.add('hidden'); }, 300);
         }
 
-        // --- 4. GOOGLE MAPS IMPLEMENTATION ---
-        function initMap() {
-            if(map) return;
-            map = L.map('map').setView([-6.2088, 106.8456], 12);
+        // Fungsi membuat icon marker kustom HTML
+        function createCustomIcon(user) {
+            // P1 = Cowok (Biru), P2 = Cewek (Pink)
+            const colorClass = user === 'p1' ? 'pin-p1' : 'pin-p2';
+            const emoji = user === 'p1' ? '🤴' : '👸';
             
-            // Menggunakan HTTPS agar tidak diblokir WebView Android modern
+            return L.divIcon({
+                className: 'cute-marker',
+                html: `<div class="cute-pin-body ${colorClass}">
+                         <span>${emoji}</span>
+                       </div>`,
+                iconSize: [40, 40],
+                iconAnchor: [20, 40], // Ujung bawah tengah
+                popupAnchor: [0, -45]
+            });
+        }
+
+        window.initMap = function() {
+            if(map) return;
+            
+            // 1. Init Map
+            map = L.map('map').setView([-6.2088, 106.8456], 11);
+            
             L.tileLayer('https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
                 attribution: 'Google Maps',
                 maxZoom: 20,
                 subdomains:['mt0','mt1','mt2','mt3']
             }).addTo(map);
 
+            // 2. Tambahkan Search Bar (Geocoder)
+            const geocoder = L.Control.geocoder({
+                defaultMarkGeocode: false,
+                placeholder: "Cari tempat kenangan...",
+                errorMessage: "Yah, ga ketemu :("
+            })
+            .on('markgeocode', function(e) {
+                const bbox = e.geocode.bbox;
+                const poly = L.polygon([
+                    bbox.getSouthEast(),
+                    bbox.getNorthEast(),
+                    bbox.getNorthWest(),
+                    bbox.getSouthWest()
+                ]);
+                map.fitBounds(poly.getBounds());
+                
+                // Simpan hasil sementara
+                tempMapLatLng = e.geocode.center;
+                currentSearchResult = e.geocode.name;
+
+                // Tampilkan Info Box Melayang
+                const box = document.getElementById('searchInfoBox');
+                const nameEl = document.getElementById('searchResultName');
+                nameEl.innerText = e.geocode.name;
+                box.classList.remove('hidden');
+
+                // Tampilkan marker sementara (preview)
+                L.popup()
+                    .setLatLng(tempMapLatLng)
+                    .setContent(`<div class="text-center"><b class="text-sm">${e.geocode.name}</b><br><button onclick="window.openPinInputFromSearch()" class="mt-2 bg-blue-500 text-white px-3 py-1 rounded text-xs">Simpan Ini</button></div>`)
+                    .openOn(map);
+            })
+            .addTo(map);
+
+            // 3. Klik Manual di Peta
             map.on('click', function(e) {
                 tempMapLatLng = e.latlng;
-                const modal = document.getElementById('mapInputPopup');
-                modal.classList.remove('hidden');
-                setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
-                document.getElementById('mapNoteInput').focus();
+                currentSearchResult = ""; // Reset nama search kalo klik manual
+                document.getElementById('searchInfoBox').classList.add('hidden'); // Sembunyikan info box
+                
+                if (isPickingLocation) {
+                    // Logic Bucket List (kode lama tetep jalan)
+                    tempWishLocation = { lat: e.latlng.lat, lng: e.latlng.lng };
+                    isPickingLocation = false; 
+                    window.switchTab('wishlist');
+                    const locStatus = document.getElementById('locStatus');
+                    locStatus.innerText = "✅ Terpilih"; 
+                    locStatus.parentElement.classList.add('bg-green-100', 'text-green-600');
+                    window.showPopup('Sip!', 'Lokasi sudah dipilih.');
+                } 
+                else {
+                    // Buka popup input manual
+                    const modal = document.getElementById('mapInputPopup');
+                    modal.classList.remove('hidden');
+                    setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
+                    document.getElementById('mapNoteInput').value = ''; // Kosongkan dulu
+                    document.getElementById('mapNoteInput').focus();
+                }
             });
 
+            // 4. Listen Data dari Firebase
             listenToData('locations', (data) => {
-                if(!data) return;
-                map.eachLayer((layer) => { if(layer instanceof L.Marker) { map.removeLayer(layer); } });
-                Object.values(data).forEach(loc => {
-                    const marker = L.marker([loc.lat, loc.lng]).addTo(map);
-                    marker.bindPopup(`<b>${loc.note}</b><br><button onclick="askDelete('locations/${loc.id}')" style="color:red; margin-top:5px; font-size:10px;">Hapus Lokasi</button>`);
+                const listContainer = document.getElementById('locationList');
+                const noMsg = document.getElementById('noLocMsg');
+                const countEl = document.getElementById('locCount');
+                
+                // Bersihkan marker lama & list
+                map.eachLayer((layer) => { 
+                    if(layer instanceof L.Marker) { map.removeLayer(layer); } 
+                });
+                listContainer.innerHTML = '';
+
+                if(!data) {
+                    noMsg.classList.remove('hidden');
+                    countEl.innerText = '0';
+                    return;
+                }
+
+                noMsg.classList.add('hidden');
+                const locations = Object.values(data).reverse(); // Urutan terbaru
+                countEl.innerText = locations.length;
+
+                locations.forEach(loc => {
+                    // A. Render Marker di Peta
+                    // Tentukan user siapa yang bikin pin ini (default p1 kalau data lama)
+                    const pinUser = loc.user || 'p1'; 
+                    const customIcon = createCustomIcon(pinUser);
+
+                    const marker = L.marker([loc.lat, loc.lng], {icon: customIcon}).addTo(map);
+                    
+                    const popupContent = `
+                        <div class="text-center min-w-[150px]">
+                            <p class="text-[10px] uppercase font-bold text-gray-400 mb-1">${pinUser === 'p1' ? '🤴 Asep' : '👸 Udel'} was here</p>
+                            <h3 class="font-bold text-gray-800 text-sm mb-2">${loc.note}</h3>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}" target="_blank" class="text-blue-500 text-xs underline">Rute Google Maps</a>
+                            <br>
+                            <button onclick="window.askDelete('locations/${loc.id}')" class="text-red-500 text-[10px] mt-2 border border-red-200 px-2 py-1 rounded hover:bg-red-50">Hapus</button>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+
+                    // B. Render List di Bawah
+                    const item = document.createElement('div');
+                    item.className = "location-card bg-gray-50 dark:bg-slate-700 p-4 rounded-2xl flex items-center gap-4 border border-gray-100 dark:border-slate-600 cursor-pointer";
+                    item.onclick = () => {
+                        map.flyTo([loc.lat, loc.lng], 16);
+                        marker.openPopup();
+                        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll ke peta
+                    };
+
+                    item.innerHTML = `
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-sm shrink-0 ${pinUser==='p1'?'bg-blue-100 text-blue-500':'bg-pink-100 text-pink-500'}">
+                            ${pinUser==='p1'?'🤴':'👸'}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-gray-800 dark:text-white truncate">${loc.note}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Lat: ${loc.lat.toFixed(4)}, Lng: ${loc.lng.toFixed(4)}</p>
+                        </div>
+                        <button onclick="event.stopPropagation(); window.askDelete('locations/${loc.id}')" class="w-8 h-8 rounded-full bg-white dark:bg-slate-600 text-gray-400 hover:text-red-500 flex items-center justify-center shadow-sm transition">
+                            🗑️
+                        </button>
+                    `;
+                    listContainer.appendChild(item);
                 });
             });
+        }
+
+        // Helper: Buka popup input jika klik tombol "Simpan" dari Search Bar
+        window.openPinInputFromSearch = function() {
+            const modal = document.getElementById('mapInputPopup');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); }, 10);
+            
+            // Otomatis isi nama tempat dari hasil search
+            if(currentSearchResult) {
+                document.getElementById('mapNoteInput').value = currentSearchResult;
+            }
+            document.getElementById('mapNoteInput').focus();
+            document.getElementById('searchInfoBox').classList.add('hidden'); // Tutup info box
         }
 
         window.closeMapInput = function() {
@@ -748,13 +1086,25 @@
             const note = document.getElementById('mapNoteInput').value;
             if(note && tempMapLatLng) {
                 const id = Date.now().toString();
-                writeData(`locations/${id}`, { id: id, lat: tempMapLatLng.lat, lng: tempMapLatLng.lng, note: note });
+                // Simpan user juga (window.currentUser)
+                const user = window.currentUser || 'p1'; 
+                
+                writeData(`locations/${id}`, { 
+                    id: id, 
+                    lat: tempMapLatLng.lat, 
+                    lng: tempMapLatLng.lng, 
+                    note: note,
+                    user: user // Tambahan: simpan siapa yg nambahin
+                });
+                
                 window.closeMapInput();
                 window.showPopup("Ditandai!", "Lokasi baru ditambahkan di peta 📍");
+            } else {
+                window.showPopup("Ups", "Kasih nama tempatnya dulu dong!", "error");
             }
         }
 
-        // --- 5. LOGIKA IDENTITAS & PROFILE ---
+        // --- IDENTITAS & PROFILE ---
         window.showIdentityPopup = function() {
             document.getElementById('btnNameP1').innerText = nameP1;
             document.getElementById('btnNameP2').innerText = nameP2;
@@ -771,13 +1121,10 @@
 
         window.processMissYou = function(role) {
             window.closeIdentityPopup();
-            
-            // Logic Notifikasi Native (Android)
             if (typeof Android !== 'undefined') {
                 Android.showNotification("Ada yang kangen! ❤️", `Si ${role === 'p1' ? nameP1 : nameP2} lagi kangen berat nih. Buruan chat!`);
                 Android.showToast("Notifikasi Kangen terkirim ke HP! 🔔");
             } else {
-                // Fallback kalau dibuka di browser biasa
                 window.showPopup("Kangen Terkirim!", "Pesan kangen virtual sudah dikirim (Simulasi).");
             }
         }
@@ -813,7 +1160,7 @@
         function listenToData(path, callback) { onValue(ref(db, path), (snapshot) => { callback(snapshot.val()); }); }
         function writeData(path, data) { set(ref(db, path), data); }
 
-        // --- 6. DATA LISTENER (REALTIME UPDATES) ---
+        // --- REALTIME UPDATES ---
         onValue(ref(db, 'config'), (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -848,16 +1195,10 @@
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                document.getElementById('loveTimer').innerHTML = `<div class="flex flex-col items-center bg-pink-50 dark:bg-slate-700 rounded-xl py-2"><span class="text-3xl font-black text-pink-600 dark:text-pink-400">${years}</span><span class="text-[10px] text-pink-400 dark:text-pink-300 uppercase font-bold">Tahun</span></div><div class="flex flex-col items-center bg-pink-50 dark:bg-slate-700 rounded-xl py-2"><span class="text-3xl font-black text-pink-600 dark:text-pink-400">${days}</span><span class="text-[10px] text-pink-400 dark:text-pink-300 uppercase font-bold">Hari</span></div><div class="flex flex-col items-center bg-gray-50 dark:bg-slate-800 rounded-xl py-2 border border-gray-100 dark:border-slate-600"><span class="text-2xl font-bold text-gray-600 dark:text-gray-300">${hours}</span><span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">Jam</span></div><div class="flex flex-col items-center bg-gray-50 dark:bg-slate-800 rounded-xl py-2 border border-gray-100 dark:border-slate-600"><span class="text-2xl font-bold text-gray-600 dark:text-gray-300">${minutes}</span><span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">Menit</span></div><div class="col-span-2 text-center text-xs text-pink-300 font-mono mt-1 animate-pulse">Running: ${seconds} seconds</div>`;
+                const timerEl = document.getElementById('loveTimer');
+                if(timerEl) timerEl.innerHTML = `<div class="flex flex-col items-center bg-pink-50 dark:bg-slate-700 rounded-xl py-2"><span class="text-3xl font-black text-pink-600 dark:text-pink-400">${years}</span><span class="text-[10px] text-pink-400 dark:text-pink-300 uppercase font-bold">Tahun</span></div><div class="flex flex-col items-center bg-pink-50 dark:bg-slate-700 rounded-xl py-2"><span class="text-3xl font-black text-pink-600 dark:text-pink-400">${days}</span><span class="text-[10px] text-pink-400 dark:text-pink-300 uppercase font-bold">Hari</span></div><div class="flex flex-col items-center bg-gray-50 dark:bg-slate-800 rounded-xl py-2 border border-gray-100 dark:border-slate-600"><span class="text-2xl font-bold text-gray-600 dark:text-gray-300">${hours}</span><span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">Jam</span></div><div class="flex flex-col items-center bg-gray-50 dark:bg-slate-800 rounded-xl py-2 border border-gray-100 dark:border-slate-600"><span class="text-2xl font-bold text-gray-600 dark:text-gray-300">${minutes}</span><span class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">Menit</span></div><div class="col-span-2 text-center text-xs text-pink-300 font-mono mt-1 animate-pulse">Running: ${seconds} seconds</div>`;
             }
         }, 1000);
-
-        window.checkPin = function() {
-            if (document.getElementById('pinInput').value === correctPin) {
-                document.getElementById('pinOverlay').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('opacity-0');
-            } else { showPopup('Salah!', 'PIN salah nih. Coba lagi! 🤔', 'error'); document.getElementById('pinInput').value = ''; }
-        }
 
         window.saveProfileText = function(u, f, id) { set(ref(db, `profiles/${u}/${f}`), document.getElementById(id).innerText); }
         window.changeProfilePic = async function(input, u) {
@@ -871,7 +1212,7 @@
             }
         }
 
-        // --- 7. GALERI LOGIC (REVISI LENGKAP) ---
+        // --- GALERI ---
         listenToData('gallery', (data) => {
             const allPhotos = data ? Object.values(data).reverse() : [];
             renderGallery(allPhotos);
@@ -880,7 +1221,6 @@
         function renderGallery(photos) {
             const grid = document.getElementById('photoGrid');
             
-            // Logic Tab Album
             if (!document.getElementById('albumControls')) {
                 const albumDiv = document.createElement('div');
                 albumDiv.id = 'albumControls';
@@ -906,10 +1246,7 @@
             });
 
             const filteredPhotos = currentAlbum === 'All' ? photos : photos.filter(img => img.album === currentAlbum);
-            
-            // Update Slideshow Data
             currentGalleryImages = filteredPhotos;
-
             grid.innerHTML = '';
             
             if (filteredPhotos.length === 0) {
@@ -917,13 +1254,10 @@
                 document.querySelector('#emptyMsg p').innerText = currentAlbum === 'All' ? "Belum ada foto. Upload dong!" : `Album '${currentAlbum}' masih kosong.`;
             } else {
                 document.getElementById('emptyMsg').classList.add('hidden');
-                
                 filteredPhotos.forEach((ph, index) => { 
                     const isSelected = selectedMemories.has(ph.id);
                     const d = document.createElement('div');
-                    
                     d.className = `group relative aspect-square overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border-2 ${isSelected ? 'border-pink-500' : 'border-transparent'}`;
-                    
                     d.innerHTML = `
                         <img src="${ph.url}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                         <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition"></div>
@@ -931,7 +1265,6 @@
                              <div class="w-6 h-6 rounded-full border-2 border-white ${isSelected ? 'bg-pink-500' : 'bg-gray-400/50'} flex items-center justify-center text-white text-xs shadow-sm">✓</div>
                         </div>
                     `;
-                    
                     d.onclick = () => {
                         if (selectionMode) {
                             if (selectedMemories.has(ph.id)) selectedMemories.delete(ph.id);
@@ -960,7 +1293,6 @@
         }
 
         window.createNewAlbum = function() {
-            // Ganti Prompt dengan Custom Popup
             window.showInputPopup("✨ Nama Album Baru:", (name) => {
                 currentAlbum = name;
                 showPopup('Album Siap!', `Sekarang upload foto buat album: ${name} 📸`);
@@ -1046,70 +1378,11 @@
             }
         }
 
-        // --- 8. DIARY LOGIC (REVISI RENDER) ---
-        function updateMoodChart(diaryData) {
-            const ctx = document.getElementById('moodChart').getContext('2d');
-            const moodCounts = { '🥰':0, '😂':0, '😭':0, '😡':0, '🥳':0, '😴':0 };
-            let total = 0;
-            if (diaryData) { Object.values(diaryData).forEach(entry => { if(moodCounts[entry.mood] !== undefined) moodCounts[entry.mood]++; total++; }); }
-            const summary = document.getElementById('moodSummary');
-            if(total > 0) {
-                const maxMood = Object.keys(moodCounts).reduce((a, b) => moodCounts[a] > moodCounts[b] ? a : b);
-                summary.innerText = `Mood dominan: ${maxMood} (Total ${total})`;
-            } else { summary.innerText = "Belum ada data cukup..."; }
-            const data = {
-                labels: ['Love', 'Lucu', 'Sedih', 'Marah', 'Party', 'Tidur'],
-                datasets: [{ data: [moodCounts['🥰'], moodCounts['😂'], moodCounts['😭'], moodCounts['😡'], moodCounts['🥳'], moodCounts['😴']], backgroundColor: ['#f472b6', '#fbbf24', '#60a5fa', '#f87171', '#a78bfa', '#9ca3af'], borderWidth: 0 }]
-            };
-            if (moodChartInstance) { moodChartInstance.data = data; moodChartInstance.update(); } 
-            else { moodChartInstance = new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); }
-        }
-
-        listenToData('diary', (data) => {
-            const l = document.getElementById('diaryList'); 
-            if(!l) return;
-            l.innerHTML = ''; 
-            const d = data ? Object.values(data).sort((a,b) => (b.timestamp||0)-(a.timestamp||0)) : [];
-            updateMoodChart(data); 
-
-            if(d.length===0) {
-                document.getElementById('noDiaryMsg').style.display = 'flex';
-            } else {
-                document.getElementById('noDiaryMsg').style.display = 'none';
-                d.forEach(entry => {
-                    const c = document.createElement('div');
-                    c.className = "bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-pink-50 dark:border-slate-700 mb-4 fade-in";
-                    c.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <h4 class="font-bold text-lg text-gray-800 dark:text-white">${entry.title || 'Tanpa Judul'}</h4>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-[10px] bg-pink-100 text-pink-600 px-2 py-0.5 rounded-full font-bold">📅 ${entry.date}</span>
-                                    <span class="text-lg">${entry.mood}</span>
-                                </div>
-                            </div>
-                            <button onclick="askDelete('diary/${entry.id}')" class="text-gray-300 hover:text-red-500 transition p-2">🗑️</button>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm whitespace-pre-line leading-relaxed border-l-2 border-pink-200 pl-3 mt-2">${entry.content}</p>
-                    `;
-                    l.appendChild(c);
-                });
-            }
-        });
-
-        window.addDiary = function() {
-            const t = document.getElementById('diaryTitle').value, c = document.getElementById('diaryContent').value;
-            if (!t || !c) return showPopup('Eits!', 'Judul & Isi wajib diisi!', 'error');
-            const id = Date.now().toString();
-            writeData(`diary/${id}`, { id, title: t, date: document.getElementById('diaryDate').value, mood: document.getElementById('diaryMood').value, content: c, timestamp: Date.now() });
-            document.getElementById('diaryTitle').value=''; document.getElementById('diaryContent').value=''; showPopup('Tersimpan!', 'Diary baru! ✨');
-        }
-
-        // --- 9. BUCKET LIST LOGIC ---
+        // --- BUCKET LIST ---
         listenToData('wishlist', (data) => {
             const g = document.getElementById('wishlistGrid');
+            if(!g) return;
             g.innerHTML = '';
-            // Ganti CSS agar tidak ketutup (Padding bawah)
             g.className = "flex flex-col gap-4 pb-24"; 
 
             const w = data ? Object.values(data).sort((a,b)=>b.timestamp-a.timestamp) : [];
@@ -1122,15 +1395,17 @@
                 w.forEach(wish=>{
                     const c = document.createElement('div');
                     c.className = `p-4 rounded-2xl border flex justify-between items-center transition ${wish.done?'bg-green-50 border-green-200 opacity-80':'bg-white border-pink-100 shadow-sm'}`;
-                    
                     const cost = wish.cost ? new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(wish.cost)) : 'Gratis';
-                    
+                    const locBtn = wish.location 
+                        ? `<button onclick="window.switchTab('maps'); setTimeout(()=>{map.setView([${wish.location.lat}, ${wish.location.lng}], 16);},300);" class="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded mt-1 font-bold inline-flex items-center gap-1 hover:bg-blue-200 transition">📍 Lihat Peta</button>` 
+                        : '';
+
                     c.innerHTML = `
                         <div class="flex-1">
                             <h4 class="font-bold text-gray-800 dark:text-white ${wish.done?'line-through text-gray-400':''}">${wish.name}</h4>
                             <div class="text-xs text-pink-500 font-bold mt-1">${cost}</div>
                             ${wish.link !== '#' ? `<a href="${wish.link}" target="_blank" class="text-[10px] text-blue-500 underline block mt-1">🔗 Link</a>` : ''}
-                        </div>
+                            ${locBtn} </div>
                         <div class="flex gap-2">
                             <button onclick="toggleWish('${wish.id}',${wish.done})" class="px-3 py-2 rounded-lg text-xs font-bold ${wish.done?'bg-white text-green-500 border border-green-200':'bg-pink-500 text-white shadow'}">${wish.done?'Batal':'✅'}</button>
                             <button onclick="askDelete('wishlist/${wish.id}')" class="px-3 py-2 bg-gray-100 dark:bg-slate-700 text-gray-400 rounded-lg hover:text-red-500">🗑️</button>
@@ -1142,26 +1417,161 @@
         });
 
         window.addWish = function() {
-            const n = document.getElementById('wishName').value; if(!n) return showPopup('Hmm..','Nama barang?', 'error');
+            const n = document.getElementById('wishName').value; 
+            if(!n) return showPopup('Hmm..','Nama barang?', 'error');
+            
             const id = Date.now().toString();
-            writeData(`wishlist/${id}`, { id, name: n, cost: document.getElementById('wishCost').value||0, link: document.getElementById('wishLink').value||'#', done: false, timestamp: Date.now() });
-            document.getElementById('wishName').value=''; document.getElementById('wishCost').value=''; showPopup('Siap!', 'Masuk Bucket List!');
+            writeData(`wishlist/${id}`, { 
+                id, 
+                name: n, 
+                cost: document.getElementById('wishCost').value||0, 
+                link: document.getElementById('wishLink').value||'#', 
+                location: tempWishLocation, 
+                done: false, 
+                timestamp: Date.now() 
+            });
+
+            document.getElementById('wishName').value=''; 
+            document.getElementById('wishCost').value=''; 
+            document.getElementById('wishLink').value='';
+            
+            tempWishLocation = null;
+            document.getElementById('locStatus').innerText = "Pilih Lokasi";
+            document.getElementById('locStatus').parentElement.classList.remove('bg-green-100', 'text-green-600');
+
+            showPopup('Siap!', 'Masuk Bucket List!');
         }
+        
+        window.pickMapLocationForWish = function() {
+            isPickingLocation = true;
+            window.switchTab('maps'); 
+            window.showPopup('Pilih Lokasi', 'Klik titik di peta untuk lokasi Bucket List ini 📍');
+        }
+
         window.toggleWish = function(id, s) { set(ref(db, `wishlist/${id}/done`), !s); }
 
-        // --- 10. VIDEO VAULT LOGIC & SHARE HANDLER ---
+        // --- DIARY LOGIC ---
+        window.renderDiary = function() {
+            const monthFilter = document.getElementById('diaryMonthFilter').value; 
+            
+            onValue(ref(db, 'diary'), (snap) => {
+                const data = snap.val() || {};
+                const allDiaries = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+                const filtered = monthFilter ? allDiaries.filter(d => d.date.startsWith(monthFilter)) : allDiaries;
+                
+                const list = document.getElementById('diaryList');
+                if(!list) return;
+                list.innerHTML = '';
+                
+                if(filtered.length === 0) {
+                    list.innerHTML = `<div class="col-span-full text-center text-gray-400 py-10 italic">Belum ada cerita di bulan ini.</div>`;
+                } else {
+                    filtered.forEach(d => {
+                        const div = document.createElement('div');
+                        div.className = "bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border-l-4 border-pink-400 dark:border-pink-600 flex flex-col justify-between";
+                        
+                        let itemAdvice = "";
+                        if(d.mood === '😭') itemAdvice = "Peluk dia erat-erat ya! 🫂";
+                        if(d.mood === '😡') itemAdvice = "Sabar, dengerin dulu penjelasannya. 🤫";
+                        if(d.mood === '😴') itemAdvice = "Jangan diganggu, biarin istirahat. 🛌";
+
+                        div.innerHTML = `
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="text-3xl">${d.mood}</span>
+                                    <div class="text-right">
+                                        <span class="text-[10px] text-gray-400 font-bold block">${d.date}</span>
+                                        <span class="text-[10px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Oleh: ${d.author === 'p1' ? 'Asep' : 'Udel'}</span>
+                                    </div>
+                                </div>
+                                <h4 class="font-bold text-lg text-gray-800 dark:text-white mb-1">${d.title}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">${d.content}</p>
+                            </div>
+                            ${itemAdvice ? `<div class="mt-3 text-[10px] bg-yellow-50 dark:bg-slate-700 text-yellow-700 dark:text-yellow-400 p-2 rounded-lg">💡 ${itemAdvice}</div>` : ''}
+                            <button onclick="deleteData('diary/${d.id}')" class="self-end text-[10px] text-red-400 mt-2 hover:text-red-600">🗑️ Hapus</button>
+                        `;
+                        list.appendChild(div);
+                    });
+                }
+                updateMoodChart(filtered);
+            });
+        }
+        
+        window.deleteData = function(path) {
+            window.askDelete(path);
+        }
+
+        function updateMoodChart(data) {
+            const moods = { '🥰':0, '😂':0, '😭':0, '😡':0, '😴':0 };
+            data.forEach(d => { if(moods[d.mood] !== undefined) moods[d.mood]++ });
+            
+            const ctx = document.getElementById('moodChart');
+            if(window.myMoodChart) window.myMoodChart.destroy();
+            
+            window.myMoodChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [], 
+                    datasets: [{ data: Object.values(moods), backgroundColor: ['#f472b6', '#fbbf24', '#60a5fa', '#f87171', '#9ca3af'], borderWidth: 0 }]
+                },
+                options: { responsive: true, cutout: '70%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+            });
+
+            const legendBox = document.getElementById('moodLegend');
+            legendBox.innerHTML = `
+                <div class="flex justify-between"><span>🥰 Love</span> <b>${moods['🥰']}</b></div>
+                <div class="flex justify-between"><span>😂 Lucu</span> <b>${moods['😂']}</b></div>
+                <div class="flex justify-between"><span>😭 Sedih</span> <b>${moods['😭']}</b></div>
+                <div class="flex justify-between"><span>😡 Marah</span> <b>${moods['😡']}</b></div>
+                <div class="flex justify-between"><span>😴 Capek</span> <b>${moods['😴']}</b></div>
+            `;
+
+            let maxMood = '🥰';
+            if (data.length > 0) {
+                 maxMood = Object.keys(moods).reduce((a, b) => moods[a] > moods[b] ? a : b);
+            }
+            const suggestions = {
+                '🥰': "Bulan penuh cinta! Ajak dia dinner romantis dong! 🌹",
+                '😂': "Kalian asik banget! Pertahankan humornya ya. 😆",
+                '😭': "Dia lagi sensitif. Coba kasih coklat atau pelukan. 🍫",
+                '😡': "Hati-hati, lagi 'senggol bacok'. Bicara pelan-pelan ya. 🏳️",
+                '😴': "Kayaknya butuh liburan atau tidur seharian bareng. 💤"
+            };
+            
+            const suggestionText = data.length > 0 ? suggestions[maxMood] : "Belum ada data mood bulan ini.";
+            document.getElementById('moodSuggestionText').innerText = suggestionText;
+        }
+
+        // --- VIDEO VAULT & SAFER REGEX ---
         listenToData('videos', (data) => {
             const g = document.getElementById('videoGrid');
-            g.innerHTML = ''; const v = data ? Object.values(data).reverse() : [];
-            if(v.length===0) document.getElementById('noVideoMsg').classList.remove('hidden'); else { document.getElementById('noVideoMsg').classList.add('hidden'); v.forEach(vid=>{
-                const c = document.createElement('div');
-                const fullUrl = vid.url || `https://www.youtube.com/watch?v=${vid.id}`;
-                const ytId = (fullUrl.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/) && fullUrl.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7].length==11) ? fullUrl.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/)[7] : false;
-                const contentHTML = ytId ? `<div class="relative w-full aspect-video bg-black"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1" frameborder="0" allowfullscreen></iframe></div>` : `<div class="relative w-full aspect-video bg-indigo-500 flex items-center justify-center text-white flex-col"><span class="text-3xl">🔗</span><span class="text-xs mt-2 uppercase font-bold">External Link</span></div>`;
-                c.className = "bg-white dark:bg-slate-800 rounded-3xl shadow-lg overflow-hidden fade-in flex flex-col border border-gray-100 dark:border-slate-700 group h-full";
-                c.innerHTML = `${contentHTML}<div class="p-5 flex justify-between items-center bg-white dark:bg-slate-800 border-t dark:border-slate-700 flex-1"><div class="w-full"><h4 class="font-bold text-gray-800 dark:text-white text-sm line-clamp-2 mb-3" title="${vid.caption}">${vid.caption}</h4><div class="flex justify-between items-center"><a href="${fullUrl}" target="_blank" class="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-bold uppercase">Buka Link</a><button onclick="askDelete('videos/${vid.dbId}')" class="text-gray-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100">🗑️</button></div></div></div>`;
-                g.appendChild(c);
-            });}
+            if(!g) return;
+            g.innerHTML = ''; 
+            const v = data ? Object.values(data).reverse() : [];
+            
+            if(v.length===0) document.getElementById('noVideoMsg').classList.remove('hidden'); 
+            else { 
+                document.getElementById('noVideoMsg').classList.add('hidden'); 
+                v.forEach(vid=>{
+                    const c = document.createElement('div');
+                    const fullUrl = vid.url || `https://www.youtube.com/watch?v=${vid.id}`;
+                    
+                    // Regex yang lebih aman (Short Circuit Check)
+                    let ytId = false;
+                    try {
+                        const match = fullUrl.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/);
+                        if(match && match[7].length === 11) ytId = match[7];
+                    } catch(e) { console.log('Bukan link YT standard'); }
+
+                    const contentHTML = ytId 
+                        ? `<div class="relative w-full aspect-video bg-black"><iframe class="absolute inset-0 w-full h-full" src="https://www.youtube-nocookie.com/embed/${ytId}?rel=0&modestbranding=1" frameborder="0" allowfullscreen></iframe></div>` 
+                        : `<div class="relative w-full aspect-video bg-indigo-500 flex items-center justify-center text-white flex-col"><span class="text-3xl">🔗</span><span class="text-xs mt-2 uppercase font-bold">External Link</span></div>`;
+                    
+                    c.className = "bg-white dark:bg-slate-800 rounded-3xl shadow-lg overflow-hidden fade-in flex flex-col border border-gray-100 dark:border-slate-700 group h-full";
+                    c.innerHTML = `${contentHTML}<div class="p-5 flex justify-between items-center bg-white dark:bg-slate-800 border-t dark:border-slate-700 flex-1"><div class="w-full"><h4 class="font-bold text-gray-800 dark:text-white text-sm line-clamp-2 mb-3" title="${vid.caption}">${vid.caption}</h4><div class="flex justify-between items-center"><a href="${fullUrl}" target="_blank" class="text-[10px] bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-bold uppercase">Buka Link</a><button onclick="askDelete('videos/${vid.dbId}')" class="text-gray-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100">🗑️</button></div></div></div>`;
+                    g.appendChild(c);
+                });
+            }
         });
 
         window.addVideo = function() {
@@ -1171,28 +1581,26 @@
             document.getElementById('videoUrl').value=''; document.getElementById('videoCaption').value=''; showPopup('Mantap!','Link disimpan.');
         }
 
-        // --- NEW: SHARE HANDLER (AUTO INPUT DARI TIKTOK/IG) ---
         window.handleSharedLink = function(text) {
-            // Mencari URL dalam teks
             const urlRegex = /(https?:\/\/[^\s]+)/g;
             const found = text.match(urlRegex);
             if(found && found.length > 0) {
                 const url = found[0];
                 document.getElementById('videoUrl').value = url;
-                // Scroll ke section video
-                window.location.hash = '#videos';
+                window.switchTab('videos');
                 if(typeof Android !== 'undefined') Android.showToast("Link dari Share diterima! Klik Simpan.");
             }
         }
 
-        // --- NEW: SHORTCUT HANDLER (WIDGET) ---
-        // Cek URL Hash saat loading untuk shortcut (e.g., content://diary)
-        window.onload = function() {
+        // --- INIT SAFER ONLOAD ---
+        window.addEventListener('load', function() {
             if(window.location.hash === '#diary') {
-                // Scroll ke diary atau buka form input
+                window.switchTab('diary');
                 document.getElementById('diaryTitle').focus();
             }
-        }
+        });
+
+        console.log("Script App Loaded Correctly!");
 
     </script>
 </body>
