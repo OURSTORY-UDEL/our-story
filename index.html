@@ -347,7 +347,7 @@
         <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-4xl font-bold z-50 p-2 hover:text-gray-300 transition">×</button>
         <button onclick="prevImage(event)" class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❮</button>
         <button onclick="nextImage(event)" class="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl p-4 hover:text-gray-300 transition z-50 outline-none">❯</button>
-        <img id="lightboxImg" src="" class="max-w-[95%] max-h-[85%] rounded-xl shadow-2xl scale-in object-contain transition-all duration-300">
+        <img id="lightboxImg" src="" class="max-w-[95%] max-h-[85%] rounded-xl shadow-2xl object-contain transition-all duration-300">
         <p class="text-white mt-4 text-xs font-bold opacity-70 bg-black/20 px-4 py-2 rounded-full">Geser Kiri / Kanan</p>
     </div>
 
@@ -715,7 +715,8 @@
         // Variabel Gallery & Slideshow
         let currentGalleryImages = []; 
         let currentImageIndex = 0;      
-        let currentAlbum = 'All';        
+        let currentAlbum = 'All';  
+        let isAnimating = false;      
 
         // --- 1. FUNGSI UTAMA (DITARUH ATAS BIAR LANGSUNG KEBACA) ---
         
@@ -923,6 +924,12 @@
             currentImageIndex = currentGalleryImages.findIndex(img => img.url === src);
             updateLightboxImage();
             const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightboxImg');
+            
+            // Tambah animasi masuk saat pertama dibuka
+            img.classList.add('animate-slide-in-next');
+            setTimeout(() => img.classList.remove('animate-slide-in-next'), 300);
+
             lb.classList.remove('hidden');
             setTimeout(() => lb.classList.remove('opacity-0'), 10);
         }
@@ -936,16 +943,60 @@
         
         window.prevImage = function(e) {
             e.stopPropagation();
-            if(currentGalleryImages.length === 0) return;
-            currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-            updateLightboxImage();
+            if(currentGalleryImages.length === 0 || isAnimating) return;
+            
+            isAnimating = true; // Kunci tombol biar gak di-spam
+            const img = document.getElementById('lightboxImg');
+            
+            // 1. Pasang animasi keluar (geser ke kanan)
+            img.classList.add('animate-slide-prev');
+
+            // 2. Tunggu animasi keluar selesai (300ms sesuai CSS)
+            setTimeout(() => {
+                // Ganti index gambar
+                currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+                // Ganti sumber gambar
+                updateLightboxImage();
+                
+                // Hapus kelas animasi keluar, ganti jadi animasi masuk
+                img.classList.remove('animate-slide-prev');
+                img.classList.add('animate-slide-in-prev');
+
+                // 3. Tunggu animasi masuk selesai, baru buka kunci
+                setTimeout(() => {
+                    img.classList.remove('animate-slide-in-prev');
+                    isAnimating = false;
+                }, 300); // Waktu tunggu kedua
+            }, 300); // Waktu tunggu pertama
         }
-        
+
         window.nextImage = function(e) {
             e.stopPropagation();
-            if(currentGalleryImages.length === 0) return;
-            currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
-            updateLightboxImage();
+            if(currentGalleryImages.length === 0 || isAnimating) return;
+
+            isAnimating = true; // Kunci tombol
+            const img = document.getElementById('lightboxImg');
+
+            // 1. Pasang animasi keluar (geser ke kiri)
+            img.classList.add('animate-slide-next');
+
+            // 2. Tunggu animasi keluar selesai (300ms)
+            setTimeout(() => {
+                // Ganti index gambar
+                currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
+                // Ganti sumber gambar
+                updateLightboxImage();
+                
+                // Hapus kelas animasi keluar, ganti jadi animasi masuk
+                img.classList.remove('animate-slide-next');
+                img.classList.add('animate-slide-in-next');
+
+                // 3. Tunggu animasi masuk selesai, baru buka kunci
+                setTimeout(() => {
+                    img.classList.remove('animate-slide-in-next');
+                    isAnimating = false;
+                }, 300);
+            }, 300);
         }
 
         window.closeLightbox = function() {
